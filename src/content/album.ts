@@ -14,7 +14,7 @@ export const ALBUM = {
     "More than anything, this album was a fun way to spend time making art with my friends.",
     "The meaning of this album for me came from a conversation with my stepdad where he explained that you never know what can matter to people — and that art is an offer.",
   ],
-  modelSrc: "/album/model/album.glb",
+  modelSrc: "/album/model/ALBUM.glb",
   tracks: [
     {
       title: "Looking Glass",
