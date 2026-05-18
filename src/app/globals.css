@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f7f3ea;
+  --foreground: #141414;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0b0b0b;
+    --foreground: #f2f2f2;
+  }
+}
+
+body {
+  background: #d9d3c8;
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.8), transparent 40%),
+    radial-gradient(circle at 85% 10%, rgba(0, 0, 0, 0.08), transparent 25%);
+  mix-blend-mode: normal;
+}
+
+@media (prefers-color-scheme: dark) {
+  body::before {
+    opacity: 0.14;
+    background-image: radial-gradient(
+        circle at 20% 15%,
+        rgba(255, 255, 255, 0.7),
+        transparent 55%
+      ),
+      radial-gradient(
+        circle at 85% 10%,
+        rgba(255, 255, 255, 0.55),
+        transparent 45%
+      ),
+      radial-gradient(
+        circle at 65% 85%,
+        rgba(255, 255, 255, 0.45),
+        transparent 55%
+      ),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.35), transparent 35%);
+    mix-blend-mode: screen;
+  }
+}
+
+@keyframes kiosk-spin {
+  from {
+    transform: translateZ(calc(-1 * var(--kiosk-radius, 200px))) rotateY(0deg);
+  }
+  to {
+    transform: translateZ(calc(-1 * var(--kiosk-radius, 200px))) rotateY(360deg);
+  }
+}
+
+@keyframes shadow-float {
+  0%,
+  100% {
+    transform: scaleX(1);
+    opacity: 0.55;
+  }
+  50% {
+    /* model is 6px higher at this point — shadow shrinks and fades */
+    transform: scaleX(0.72);
+    opacity: 0.22;
+  }
+}
+
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
