@@ -17,11 +17,11 @@ export default function ContactPage() {
           src="/cat.png"
           alt=""
           fill
-          className="object-cover"
-          style={{ objectPosition: "center 25%" }}
+          className="object-cover object-[center_10%] sm:object-[center_25%]"
           priority
         />
-        <div className="absolute inset-0 bg-black/30" />
+        {/* Gradient darkest at top where text lives, lighter toward bottom */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/45 to-black/20" />
       </div>
 
       {/* Content */}
