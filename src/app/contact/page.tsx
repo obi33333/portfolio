@@ -17,7 +17,7 @@ export default function ContactPage() {
           src="/cat.png"
           alt=""
           fill
-          className="object-cover object-top sm:object-cover sm:[object-position:center_20%]"
+          className="object-cover object-top sm:object-cover sm:[object-position:center_35%]"
           priority
         />
       </div>
