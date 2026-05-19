@@ -12,12 +12,12 @@ export default function ContactPage() {
     <main className="relative min-h-[calc(100vh-3.5rem)] bg-black overflow-hidden">
 
       {/* Cat image — starts one third down the page */}
-      <div className="absolute inset-x-0 bottom-0 top-[28%] sm:top-0">
+      <div className="absolute inset-x-0 bottom-0 top-[28%] sm:top-[30%]">
         <Image
           src="/cat.png"
           alt=""
           fill
-          className="object-cover object-top"
+          className="object-cover object-top sm:object-contain sm:object-bottom"
           priority
         />
       </div>
