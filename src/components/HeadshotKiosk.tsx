@@ -43,6 +43,7 @@ export default function HeadshotKiosk({
   const dragStartXRef = useRef(0);
   const dragStartAngleRef = useRef(0);
   const dragDistanceRef = useRef(0);
+  const pointerDownSrcRef = useRef<string | null>(null);
 
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
@@ -98,21 +99,21 @@ export default function HeadshotKiosk({
 
   const onPointerUp = () => {
     isDraggingRef.current = false;
-    // Snap to nearest card after drag
-    if (dragDistanceRef.current >= 5) {
+    if (dragDistanceRef.current < 5 && pointerDownSrcRef.current) {
+      // Tap — open lightbox
+      setLightboxSrc(pointerDownSrcRef.current);
+    } else if (dragDistanceRef.current >= 5) {
+      // Drag — snap to nearest card
       const normalizedAngle = (((-angleRef.current) % 360) + 360) % 360;
       const nearestIdx = Math.round(normalizedAngle / step) % count;
       targetAngleRef.current = -nearestIdx * step;
     }
+    pointerDownSrcRef.current = null;
   };
 
   const onPointerCancel = () => {
     isDraggingRef.current = false;
-  };
-
-  const openLightbox = (src: string) => {
-    if (dragDistanceRef.current >= 5) return; // drag, not a tap
-    setLightboxSrc(src);
+    pointerDownSrcRef.current = null;
   };
 
   // Close lightbox on Escape
@@ -161,10 +162,10 @@ export default function HeadshotKiosk({
                 height: itemHeight,
                 transform: `translate(-50%, -50%) rotateY(${idx * step}deg) translateZ(${resolvedRadius}px)`,
               }}
+              onPointerDown={() => { pointerDownSrcRef.current = img.src; }}
               onPointerEnter={() => {
                 if (!isDraggingRef.current) targetAngleRef.current = -idx * step;
               }}
-              onClick={() => openLightbox(img.src)}
             >
               <Image
                 src={img.src}
