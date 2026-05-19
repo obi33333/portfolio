@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, forwardRef } from "react";
 
 type Props = {
   src: string;
@@ -26,39 +26,48 @@ type Props = {
   shadowSoftness?: number;
   exposure?: number;
   interactionPrompt?: "auto" | "none";
+  animationName?: string;
+  autoplay?: boolean;
+  onClick?: React.MouseEventHandler<HTMLElement>;
   onPointerDown?: React.PointerEventHandler<HTMLElement>;
   onPointerMove?: React.PointerEventHandler<HTMLElement>;
   onPointerUp?: React.PointerEventHandler<HTMLElement>;
 };
 
-export default function ModelViewer({
-  src,
-  alt,
-  className,
-  style,
-  cameraControls = true,
-  autoRotate = false,
-  disableZoom = false,
-  loading = "lazy",
-  reveal = "auto",
-  rotationPerSecond = "24deg",
-  bounds = "tight",
-  orientation,
-  cameraOrbit,
-  minCameraOrbit,
-  maxCameraOrbit,
-  cameraTarget,
-  fieldOfView,
-  minFieldOfView,
-  maxFieldOfView,
-  shadowIntensity = 0.6,
-  shadowSoftness = 0,
-  exposure = 1,
-  interactionPrompt = "auto",
-  onPointerDown,
-  onPointerMove,
-  onPointerUp,
-}: Props) {
+const ModelViewer = forwardRef<HTMLElement, Props>(function ModelViewer(
+  {
+    src,
+    alt,
+    className,
+    style,
+    cameraControls = true,
+    autoRotate = false,
+    disableZoom = false,
+    loading = "lazy",
+    reveal = "auto",
+    rotationPerSecond = "24deg",
+    bounds = "tight",
+    orientation,
+    cameraOrbit,
+    minCameraOrbit,
+    maxCameraOrbit,
+    cameraTarget,
+    fieldOfView,
+    minFieldOfView,
+    maxFieldOfView,
+    shadowIntensity = 0.6,
+    shadowSoftness = 0,
+    exposure = 1,
+    interactionPrompt = "auto",
+    animationName,
+    autoplay = false,
+    onClick,
+    onPointerDown,
+    onPointerMove,
+    onPointerUp,
+  },
+  ref
+) {
   useEffect(() => {
     void import("@google/model-viewer");
   }, []);
@@ -77,6 +86,8 @@ export default function ModelViewer({
     "shadow-intensity": shadowIntensity,
     "shadow-softness": shadowSoftness,
     "interaction-prompt": interactionPrompt,
+    ref,
+    onClick,
     onPointerDown,
     onPointerMove,
     onPointerUp,
@@ -92,6 +103,10 @@ export default function ModelViewer({
   if (fieldOfView) props["field-of-view"] = fieldOfView;
   if (minFieldOfView) props["min-field-of-view"] = minFieldOfView;
   if (maxFieldOfView) props["max-field-of-view"] = maxFieldOfView;
+  if (animationName) props["animation-name"] = animationName;
+  if (autoplay) props["autoplay"] = true;
 
   return React.createElement("model-viewer", props);
-}
+});
+
+export default ModelViewer;
