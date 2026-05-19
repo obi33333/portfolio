@@ -120,7 +120,6 @@ export default function Home() {
                 images={HEADSHOTS}
                 className="h-[300px] w-full max-w-[340px]"
                 secondsPerRevolution={90}
-                cardHref="/about"
               />
             </div>
           </div>
