@@ -88,11 +88,11 @@ const PROJECTS: Project[] = [
   {
     slug: "indy-film",
     category: "one-day",
-    title: "Indy Film Project",
+    title: "Indie Film Project",
     summary:
       "A self-directed Blender animation series imagining fish flying through the sky. An early exploration of 3D storytelling using free Sketchfab assets.",
     tags: ["Blender", "Animation", "3D", "Storytelling"],
-    preview: { type: "image", src: "/projects/indy-film/preview.png", alt: "Indy Film Project render still" },
+    preview: { type: "image", src: "/projects/indy-film/preview.png", alt: "Indie Film Project render still" },
     media: [
       { type: "video", src: "/projects/indy-film/birds.mp4" },
       { type: "video", src: "/projects/indy-film/skyfish.mp4" },

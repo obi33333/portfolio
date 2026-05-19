@@ -63,21 +63,6 @@ export default function Home() {
             Obadiah Bernstein
           </p>
 
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/projects"
-              className="inline-flex items-center rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-black/80"
-            >
-              Explore projects
-            </Link>
-            <Link
-              href="/about"
-              className="inline-flex items-center rounded-full border border-black/15 px-5 py-2.5 text-sm font-semibold text-black/70 transition-colors hover:border-black/30 hover:text-black"
-            >
-              About me
-            </Link>
-          </div>
-
           {/* Section pills + persistent preview card.
               The card is absolute so it never shifts the grid or contact section.
               activeSection never resets to null — it stays on the last hovered pill. */}
