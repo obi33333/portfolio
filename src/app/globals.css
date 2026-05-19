@@ -90,3 +90,9 @@ body::before {
     transform: translateY(-6px);
   }
 }
+
+@keyframes fadeout {
+  to {
+    opacity: 0;
+  }
+}
