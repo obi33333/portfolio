@@ -348,7 +348,7 @@ const PROJECTS: Project[] = [
       "A Blender VFX composite using Mixamo character animations and an Ian Hubert-inspired handheld camera workflow. Made in third year as a personal skills push.",
     tags: ["Blender", "VFX", "Mixamo", "Compositing", "Camera Tracking"],
     preview: { type: "video", src: "/projects/vfx-kill-robot/demo.mp4" },
-    media: [{ type: "video", src: "/projects/vfx-kill-robot/maniac.mp4" }],
+    media: [{ type: "video", src: "/projects/vfx-kill-robot/maniacSMALL.mp4" }],
     body: [
       "This VFX shot was made entirely in Blender, integrating a Mixamo-rigged and animated character into live-action footage using an Ian Hubert-inspired production approach.",
       "Ian Hubert's workflow prioritizes speed and a specific handheld aesthetic — imperfect, kinetic, and cinematic — over technical perfection. Adopting it meant learning to use Blender's camera tracking and compositing tools together as a unified pipeline.",
