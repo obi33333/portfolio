@@ -9,23 +9,23 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <main className="relative min-h-[calc(100vh-3.5rem)] overflow-hidden">
+    <main className="relative min-h-[calc(100vh-3.5rem)]">
 
-      {/* Full-page cat background */}
-      <Image
-        src="/cat.png"
-        alt=""
-        fill
-        className="object-cover"
-        style={{ objectPosition: "center 25%" }}
-        priority
-      />
-
-      {/* Subtle overlay so text is readable */}
-      <div className="absolute inset-0 bg-black/30" />
+      {/* Fixed background — stays behind content at all viewport sizes */}
+      <div className="fixed inset-0 -z-10">
+        <Image
+          src="/cat.png"
+          alt=""
+          fill
+          className="object-cover"
+          style={{ objectPosition: "center 25%" }}
+          priority
+        />
+        <div className="absolute inset-0 bg-black/30" />
+      </div>
 
       {/* Content */}
-      <div className="relative z-10 flex min-h-[calc(100vh-3.5rem)] flex-col items-center px-8 pt-12 md:px-14 md:pt-16">
+      <div className="relative flex min-h-[calc(100vh-3.5rem)] flex-col items-center px-8 pt-12 md:px-14 md:pt-16">
         <Link
           href="/"
           className="absolute top-8 left-8 text-sm text-white/70 transition-colors hover:text-white md:left-14"
