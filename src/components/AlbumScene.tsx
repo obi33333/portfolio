@@ -27,8 +27,8 @@ const APPROX_ASPECT = 16 / 9;
 
 // Groove radii as fraction of REC_RADIUS — outer track first.
 // Pushed close to 1.0 so lines appear to touch the record's visual edge.
-const A_RADII = [0.97, 0.92, 0.87, 0.81, 0.74, 0.67, 0.62];
-const B_RADII = [0.96, 0.88, 0.79, 0.70];
+const A_RADII = [0.97, 0.90, 0.81, 0.72, 0.63, 0.52, 0.43];
+const B_RADII = [0.96, 0.83, 0.68, 0.53];
 
 /**
  * Compute where a line should leave the groove edge.
@@ -52,9 +52,10 @@ export default function AlbumScene() {
   const canvasRef    = useRef<HTMLCanvasElement>(null);
   const audioRef     = useRef<HTMLAudioElement>(null);
 
-  const [phase,       setPhase]       = useState<Phase>("idle");
-  const [activeTrack, setActiveTrack] = useState<number | null>(null);
-  const [side,        setSide]        = useState<Side>("A");
+  const [phase,        setPhase]        = useState<Phase>("idle");
+  const [activeTrack,  setActiveTrack]  = useState<number | null>(null);
+  const [side,         setSide]         = useState<Side>("A");
+  const [hoveredTrack, setHoveredTrack] = useState<number | null>(null);
 
   const phaseRef       = useRef<Phase>("idle");
   const activeTrackRef = useRef<number | null>(null);
@@ -215,18 +216,12 @@ export default function AlbumScene() {
         ptrDownX = e.clientX;
         ptrDownY = e.clientY;
 
-        // If a track is playing, try to start scratch mode
+        // Any click while playing activates scratch — capture pointer so
+        // moves outside the canvas boundary still fire on this element
         if (phaseRef.current === "playing") {
-          const rect = canvas.getBoundingClientRect();
-          ptrNDC.set(
-            ((e.clientX - rect.left) / rect.width)  *  2 - 1,
-            ((e.clientY - rect.top)  / rect.height) * -2 + 1
-          );
-          raycaster.setFromCamera(ptrNDC, camera);
-          if (raycaster.intersectObjects(collectMeshes()).length > 0) {
-            scratchRef.current = { active: true, lastX: e.clientX, velocity: 0 };
-            canvas.style.cursor = "grabbing";
-          }
+          scratchRef.current = { active: true, lastX: e.clientX, velocity: 0 };
+          canvas.setPointerCapture(e.pointerId);
+          canvas.style.cursor = "grabbing";
         }
       };
 
@@ -236,25 +231,26 @@ export default function AlbumScene() {
         scratchRef.current.lastX    = e.clientX;
         scratchRef.current.velocity = dx;
 
-        // Manually rotate the record in the drag direction
+        // Rotate record in the drag direction
         if (recordPivot) {
-          recordPivot.rotation.y += dx * 0.025;
+          recordPivot.rotation.y += dx * 0.05;
         }
 
-        // Map drag velocity to playback rate
-        // 60 px/event ≈ +/- 1× speed change; clamped 0.1–3.0
+        // Map drag velocity to playback rate.
+        // ±25 px/event ≈ ±1× speed change; clamped 0.1–3.0
         const audio = audioRef.current;
-        if (audio && audio.src) {
-          audio.playbackRate = Math.max(0.1, Math.min(3.0, 1 + dx / 60));
+        if (audio) {
+          audio.playbackRate = Math.max(0.1, Math.min(3.0, 1 + dx / 25));
         }
       };
 
       const onPointerUp = (e: PointerEvent) => {
-        // End scratch mode
+        // End scratch mode — release pointer capture and restore grab cursor
         if (scratchRef.current.active) {
           scratchRef.current.active = false;
-          canvas.style.cursor = "ew-resize";
-          // Velocity will decay back to 1× in the tick loop
+          canvas.releasePointerCapture(e.pointerId);
+          canvas.style.cursor = "grab";
+          // playbackRate decays back to 1× in the tick loop
         }
 
         // Open-case click — only when idle and not a drag
@@ -415,17 +411,11 @@ export default function AlbumScene() {
     >
       <audio ref={audioRef} style={{ display: "none" }} />
 
-      {/* Hover styles for song labels — !important overrides inline style on :hover */}
-      <style>{`
-        .song-btn:hover .song-title { color: rgba(0,0,0,0.82) !important; text-decoration: underline; }
-        .song-btn:hover .song-play-icon { opacity: 0.55 !important; }
-      `}</style>
-
       {/* ── Canvas ────────────────────────────────────────────────────── */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
-        style={{ cursor: phase === "idle" ? "pointer" : phase === "playing" ? "ew-resize" : "default" }}
+        style={{ cursor: phase === "idle" ? "pointer" : phase === "playing" ? "grab" : "default" }}
       />
 
       {/* ── Hints ────────────────────────────────────────────────────── */}
@@ -462,22 +452,28 @@ export default function AlbumScene() {
             </filter>
           </defs>
           {tracks.map((_, i) => {
-            const ly = yCoords[i];
+            const ly       = yCoords[i];
             const [sx, sy] = lineStart(i, side, rail, ly);
-            const isActive = activeTrack === i;
+            const isActive  = activeTrack === i;
+            const isHovered = hoveredTrack === i && !isActive;
             return (
               <line
                 key={`${side}-${i}`}
-                x1={`${sx}%`}        y1={`${sy}%`}
+                x1={`${sx}%`}         y1={`${sy}%`}
                 x2={`${rail - 1.2}%`} y2={`${ly}%`}
-                stroke={isActive ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.5)"}
-                strokeWidth={isActive ? 3 : 1.5}
+                stroke={
+                  isActive  ? "rgba(255,255,255,0.95)" :
+                  isHovered ? "rgba(255,255,255,0.85)" :
+                              "rgba(255,255,255,0.45)"
+                }
+                strokeWidth={isActive ? 3 : isHovered ? 2 : 1.5}
                 strokeLinecap="round"
-                filter={isActive ? "url(#line-glow)" : undefined}
+                filter={isActive || isHovered ? "url(#line-glow)" : undefined}
                 pathLength="1"
                 style={{
                   strokeDasharray:  1,
                   strokeDashoffset: 0,
+                  transition:       "stroke 0.15s, stroke-width 0.15s",
                   animation: `draw-line 0.55s cubic-bezier(.4,0,.2,1) ${i * 0.07}s both`,
                 }}
               />
@@ -506,34 +502,26 @@ export default function AlbumScene() {
               >
                 <button
                   onClick={() => handleSongClick(i)}
-                  className="focus:outline-none block song-btn"
+                  onMouseEnter={() => setHoveredTrack(i)}
+                  onMouseLeave={() => setHoveredTrack(null)}
+                  className="focus:outline-none block"
                   style={{ textAlign: "left" }}
                 >
-                  <span className="flex items-center" style={{ gap: "4px" }}>
-                    <span
-                      className="song-play-icon"
-                      style={{
-                        fontSize:   "8px",
-                        opacity:    isActive ? 1 : 0,
-                        transition: "opacity 0.15s",
-                        color:      "rgba(0,0,0,0.7)",
-                        flexShrink: 0,
-                      }}
-                    >▶</span>
-                    <span
-                      className="song-title"
-                      style={{
-                        display:    "block",
-                        fontSize:   "13px",
-                        fontWeight: 600,
-                        lineHeight: "1.25",
-                        color:      isActive ? "rgba(0,0,0,0.9)" : "rgba(0,0,0,0.55)",
-                        transition: "color 0.15s",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {t.title}
-                    </span>
+                  <span
+                    style={{
+                      display:    "block",
+                      fontSize:   "13px",
+                      fontWeight: 600,
+                      lineHeight: "1.25",
+                      color:
+                        isActive          ? "rgba(0,0,0,0.9)"  :
+                        hoveredTrack === i ? "rgba(0,0,0,0.85)" :
+                                            "rgba(0,0,0,0.45)",
+                      transition: "color 0.15s",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {t.title}
                   </span>
                 </button>
 
