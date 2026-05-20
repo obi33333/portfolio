@@ -60,6 +60,8 @@ export default function AlbumScene() {
   const activeTrackRef = useRef<number | null>(null);
   const sideRef        = useRef<Side>("A");
   const flipRef        = useRef({ current: 0, target: 0 });
+  // Scratch state — tracks whether the user is dragging the spinning record
+  const scratchRef     = useRef({ active: false, lastX: 0, velocity: 0 });
 
   const commitPhase = useCallback((p: Phase) => {
     phaseRef.current = p;
@@ -209,9 +211,53 @@ export default function AlbumScene() {
         return out;
       };
 
-      const onPointerDown = (e: PointerEvent) => { ptrDownX = e.clientX; ptrDownY = e.clientY; };
+      const onPointerDown = (e: PointerEvent) => {
+        ptrDownX = e.clientX;
+        ptrDownY = e.clientY;
+
+        // If a track is playing, try to start scratch mode
+        if (phaseRef.current === "playing") {
+          const rect = canvas.getBoundingClientRect();
+          ptrNDC.set(
+            ((e.clientX - rect.left) / rect.width)  *  2 - 1,
+            ((e.clientY - rect.top)  / rect.height) * -2 + 1
+          );
+          raycaster.setFromCamera(ptrNDC, camera);
+          if (raycaster.intersectObjects(collectMeshes()).length > 0) {
+            scratchRef.current = { active: true, lastX: e.clientX, velocity: 0 };
+            canvas.style.cursor = "grabbing";
+          }
+        }
+      };
+
+      const onPointerMove = (e: PointerEvent) => {
+        if (!scratchRef.current.active) return;
+        const dx = e.clientX - scratchRef.current.lastX;
+        scratchRef.current.lastX    = e.clientX;
+        scratchRef.current.velocity = dx;
+
+        // Manually rotate the record in the drag direction
+        if (recordPivot) {
+          recordPivot.rotation.y += dx * 0.025;
+        }
+
+        // Map drag velocity to playback rate
+        // 60 px/event ≈ +/- 1× speed change; clamped 0.1–3.0
+        const audio = audioRef.current;
+        if (audio && audio.src) {
+          audio.playbackRate = Math.max(0.1, Math.min(3.0, 1 + dx / 60));
+        }
+      };
 
       const onPointerUp = (e: PointerEvent) => {
+        // End scratch mode
+        if (scratchRef.current.active) {
+          scratchRef.current.active = false;
+          canvas.style.cursor = "ew-resize";
+          // Velocity will decay back to 1× in the tick loop
+        }
+
+        // Open-case click — only when idle and not a drag
         if (phaseRef.current !== "idle") return;
         const dx = e.clientX - ptrDownX;
         const dy = e.clientY - ptrDownY;
@@ -235,6 +281,7 @@ export default function AlbumScene() {
       };
 
       canvas.addEventListener("pointerdown", onPointerDown);
+      canvas.addEventListener("pointermove", onPointerMove);
       canvas.addEventListener("pointerup",   onPointerUp);
 
       // ── Resize (called once here; also wired to ResizeObserver below) ──────
@@ -253,7 +300,16 @@ export default function AlbumScene() {
         mixers.forEach((m) => m.update(delta));
 
         if (phaseRef.current === "playing" && recordPivot) {
-          recordPivot.rotation.y += delta * Math.PI * 0.8;
+          if (!scratchRef.current.active) {
+            recordPivot.rotation.y += delta * Math.PI * 0.8;
+          }
+        }
+
+        // Smoothly restore playback rate to 1× after scratch ends
+        const tickAudio = audioRef.current;
+        if (tickAudio && !scratchRef.current.active && Math.abs(tickAudio.playbackRate - 1) > 0.01) {
+          tickAudio.playbackRate += (1 - tickAudio.playbackRate) * Math.min(delta * 6, 0.3);
+          if (Math.abs(tickAudio.playbackRate - 1) < 0.01) tickAudio.playbackRate = 1;
         }
 
         if (recordPivot) {
@@ -272,6 +328,7 @@ export default function AlbumScene() {
       cleanup = () => {
         ro.disconnect();
         canvas.removeEventListener("pointerdown", onPointerDown);
+        canvas.removeEventListener("pointermove", onPointerMove);
         canvas.removeEventListener("pointerup",   onPointerUp);
         renderer.dispose();
       };
@@ -358,11 +415,17 @@ export default function AlbumScene() {
     >
       <audio ref={audioRef} style={{ display: "none" }} />
 
+      {/* Hover styles for song labels — !important overrides inline style on :hover */}
+      <style>{`
+        .song-btn:hover .song-title { color: rgba(0,0,0,0.82) !important; text-decoration: underline; }
+        .song-btn:hover .song-play-icon { opacity: 0.55 !important; }
+      `}</style>
+
       {/* ── Canvas ────────────────────────────────────────────────────── */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
-        style={{ cursor: phase === "idle" ? "pointer" : "default" }}
+        style={{ cursor: phase === "idle" ? "pointer" : phase === "playing" ? "ew-resize" : "default" }}
       />
 
       {/* ── Hints ────────────────────────────────────────────────────── */}
@@ -443,21 +506,34 @@ export default function AlbumScene() {
               >
                 <button
                   onClick={() => handleSongClick(i)}
-                  className="focus:outline-none block"
+                  className="focus:outline-none block song-btn"
                   style={{ textAlign: "left" }}
                 >
-                  <span
-                    style={{
-                      display:    "block",
-                      fontSize:   "13px",
-                      fontWeight: 600,
-                      lineHeight: "1.25",
-                      color:      isActive ? "rgba(0,0,0,0.9)" : "rgba(0,0,0,0.55)",
-                      transition: "color 0.15s",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {t.title}
+                  <span className="flex items-center" style={{ gap: "4px" }}>
+                    <span
+                      className="song-play-icon"
+                      style={{
+                        fontSize:   "8px",
+                        opacity:    isActive ? 1 : 0,
+                        transition: "opacity 0.15s",
+                        color:      "rgba(0,0,0,0.7)",
+                        flexShrink: 0,
+                      }}
+                    >▶</span>
+                    <span
+                      className="song-title"
+                      style={{
+                        display:    "block",
+                        fontSize:   "13px",
+                        fontWeight: 600,
+                        lineHeight: "1.25",
+                        color:      isActive ? "rgba(0,0,0,0.9)" : "rgba(0,0,0,0.55)",
+                        transition: "color 0.15s",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {t.title}
+                    </span>
                   </span>
                 </button>
 
