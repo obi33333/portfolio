@@ -96,3 +96,18 @@ body::before {
     opacity: 0;
   }
 }
+
+@keyframes draw-line {
+  from { stroke-dashoffset: 1; }
+  to   { stroke-dashoffset: 0; }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(6px) translateX(var(--label-offset-x, 0px)); }
+  to   { opacity: 1; transform: translateY(0)   translateX(var(--label-offset-x, 0px)); }
+}
+
+@keyframes hint-pulse {
+  0%, 100% { opacity: 0.45; }
+  50%       { opacity: 0.75; }
+}
