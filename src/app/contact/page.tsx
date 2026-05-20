@@ -12,7 +12,7 @@ export default function ContactPage() {
     <main className="relative min-h-[calc(100vh-3.5rem)] bg-black overflow-hidden">
 
       {/* Cat image — starts partway down the page */}
-      <div className="absolute inset-x-0 bottom-0 top-[28%] sm:top-[12%]">
+      <div className="absolute inset-x-0 bottom-0 top-[28%] sm:top-[12%] lg:top-[4%]">
         <Image
           src="/cat.png"
           alt=""
@@ -50,9 +50,8 @@ export default function ContactPage() {
           </a>
           <div className="mt-5 flex items-center justify-center gap-4">
             <a
-              href="/ObadiahBernsteinResume (2).pdf"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/ObadiahBernsteinResume.pdf"
+              download="ObadiahBernsteinResume.pdf"
               className="rounded-full border border-white/25 px-5 py-2 text-sm text-white/80 hover:border-white/60 hover:text-white transition-colors"
             >
               Download Résumé
