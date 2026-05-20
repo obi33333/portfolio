@@ -31,7 +31,7 @@ const PROJECTS: Project[] = [
     title: "Harmonic Hues",
     summary:
       "A real-time audio-reactive painterly visualizer built in TouchDesigner. Blends procedural generation with physical paint simulation and adapts to any song you load.",
-    tags: ["TouchDesigner", "Audio Visualization", "Procedural Art", "Interactive"],
+    tags: ["TouchDesigner", "Audio Visualization", "Creative Coding"],
     preview: { type: "image", src: "/projects/harmonic-hues/cover.jpg", alt: "Harmonic Hues visualizer still" },
     media: [{ type: "video", src: "/projects/harmonic-hues/demo.mp4" }],
     body: [
@@ -46,7 +46,7 @@ const PROJECTS: Project[] = [
     title: "CRT Game",
     summary:
       "A community-based plant growth simulation displayed on three salvaged CRT televisions. Passersby press a physical button to collaboratively grow a shared digital plant.",
-    tags: ["Game Dev", "Physical Computing", "Community Art", "Installation", "Unity"],
+    tags: ["Unity", "Game Dev", "Physical Computing", "Installation"],
     preview: { type: "image", src: "/projects/crt-game/cover.jpg", alt: "CRT Game on television screens" },
     media: [{ type: "video", src: "/projects/crt-game/demo.mp4" }],
     body: [
@@ -61,7 +61,7 @@ const PROJECTS: Project[] = [
     title: "Desktop Pet",
     summary:
       "A custom Shimeji desktop companion based on Oba, a personal doodle character. Adapted from a vintage early-2000s Japanese desktop pet application.",
-    tags: ["Creative Coding", "Character Design", "Desktop App", "Java"],
+    tags: ["Creative Coding", "Java"],
     preview: { type: "image", src: "/projects/desktop-pet/DesktopPetCoverImage.png", alt: "Desktop Pet character screenshot" },
     media: [{ type: "video", src: "/projects/desktop-pet/demo.mp4" }],
     body: [
@@ -76,7 +76,7 @@ const PROJECTS: Project[] = [
     title: "Custom Lively Wallpapers",
     summary:
       "An interactive desktop wallpaper with integrated Spotify controls and a diegetic clock, built by extending an open-source Lively Wallpaper using Three.js.",
-    tags: ["JavaScript", "Three.js", "Web", "Creative Coding", "HTML/CSS"],
+    tags: ["Three.js", "Web", "Creative Coding"],
     preview: { type: "image", src: "/projects/custom-lively-wallpapers/cover.png", alt: "Living room wallpaper preview" },
     media: [{ type: "video", src: "/projects/custom-lively-wallpapers/demo.mp4" }],
     body: [
@@ -91,7 +91,7 @@ const PROJECTS: Project[] = [
     title: "Indie Film Project",
     summary:
       "A self-directed Blender animation series imagining fish flying through the sky. An early exploration of 3D storytelling using free Sketchfab assets.",
-    tags: ["Blender", "Animation", "3D", "Storytelling"],
+    tags: ["Blender", "3D", "Animation"],
     preview: { type: "image", src: "/projects/indy-film/preview.png", alt: "Indie Film Project render still" },
     media: [
       { type: "video", src: "/projects/indy-film/birds.mp4" },
@@ -109,7 +109,7 @@ const PROJECTS: Project[] = [
     title: "Live Texture Painting",
     summary:
       "A live texture painting experiment in Blender using real watercolor paints and a webcam as input. A series of still life models painted and rendered simultaneously.",
-    tags: ["Blender", "Creative Process", "Live Art", "3D", "Watercolor"],
+    tags: ["Blender", "3D", "Creative Coding"],
     preview: { type: "video", src: "/projects/live-texture-painting/demo.mp4" },
     media: [
       { type: "video", src: "/projects/live-texture-painting/timelapse.mp4" },
@@ -128,7 +128,7 @@ const PROJECTS: Project[] = [
     title: "Pinball Game",
     summary:
       "A body-controlled pinball game built in Unity, where force sensing resistors connected to a microcontroller let players use physical pressure to operate the flippers.",
-    tags: ["Unity", "Arduino", "Physical Computing", "Game Dev", "Interaction Design", "FSR"],
+    tags: ["Unity", "Arduino", "Physical Computing", "Game Dev"],
     preview: { type: "image", src: "/projects/pinball-game/cover.jpg", alt: "Pinball game setup photo" },
     media: [{ type: "video", src: "/projects/pinball-game/demo.mp4" }],
     body: [
@@ -144,7 +144,7 @@ const PROJECTS: Project[] = [
     title: "Poems",
     summary:
       "A series of Blender renders paired with original poetry and music composed in FL Studio. Visual compositing done in Premiere Pro.",
-    tags: ["Blender", "FL Studio", "Premiere Pro", "Poetry", "Multimedia"],
+    tags: ["Blender", "FL Studio", "Premiere Pro", "Animation"],
     preview: { type: "image", src: "/projects/poems/cover.jpg", alt: "Poems visual still" },
     media: [
       { type: "video", src: "/projects/poems/demo.mp4", caption: "Poem 1" },
@@ -163,7 +163,7 @@ const PROJECTS: Project[] = [
     title: "Renders",
     summary:
       "A personal collection of Blender renders spanning college, from early stylistic explorations to polished stills and a LookingGlass display diorama.",
-    tags: ["Blender", "3D Rendering", "Digital Art", "LookingGlass"],
+    tags: ["Blender", "3D"],
     preview: { type: "image", src: "/projects/renders/preview.png", alt: "Oba character render" },
     media: [
       {
@@ -210,7 +210,7 @@ const PROJECTS: Project[] = [
     title: "Rotoscope",
     summary:
       "A rotoscoped animation made in Blender's 2D animation toolkit during sophomore year. A focused dive into frame-by-frame technique.",
-    tags: ["Blender", "Rotoscoping", "2D Animation", "Frame-by-Frame"],
+    tags: ["Blender", "Animation"],
     preview: { type: "image", src: "/projects/rotoscope/cover.png", alt: "Rotoscope animation still" },
     media: [{ type: "video", src: "/projects/rotoscope/demo.mp4" }],
     body: [
@@ -226,7 +226,7 @@ const PROJECTS: Project[] = [
     title: "Tell Me What's Real",
     summary:
       "A music video made for Angelo (Disuko Music) using After Effects, Premiere Pro, TouchDesigner, and Blender. A full-pipeline collaborative creative project.",
-    tags: ["After Effects", "Premiere Pro", "TouchDesigner", "Blender", "Music Video", "Collaboration"],
+    tags: ["Blender", "TouchDesigner", "After Effects", "Premiere Pro", "Music Video"],
     preview: { type: "image", src: "/projects/tell-me-whats-real/cover.jpg", alt: "Tell Me What's Real music video still" },
     media: [{ type: "video", src: "/projects/tell-me-whats-real/demo.mp4" }],
     body: [
@@ -242,7 +242,7 @@ const PROJECTS: Project[] = [
     title: "TouchDesigner Visualizers",
     summary:
       "A personal collection of audio visualizers built in TouchDesigner as ongoing creative practice. Made in free time and refined over time.",
-    tags: ["TouchDesigner", "Audio Visualization", "Creative Coding", "Real-Time"],
+    tags: ["TouchDesigner", "Audio Visualization", "Creative Coding"],
     preview: { type: "image", src: "/projects/touchdesigner-visualizers/cover.jpg", alt: "TouchDesigner visualizer still" },
     media: [{ type: "video", src: "/projects/touchdesigner-visualizers/demo.mp4" }],
     body: [
@@ -259,6 +259,7 @@ const PROJECTS: Project[] = [
     summary:
       "A live-cut music video built in TouchDesigner, Unity, and Premiere Pro. Scenes were switched live during performance to create the final edit.",
     tags: ["TouchDesigner", "Unity", "Premiere Pro", "Music Video", "Live Performance"],
+
     preview: { type: "image", src: "/projects/trust-fall/cover.jpg", alt: "Trust Fall music video still" },
     media: [{ type: "video", src: "/projects/trust-fall/demo.mp4" }],
     links: { youtube: "https://www.youtube.com/watch?v=ppWb32owQPo" },
@@ -276,7 +277,7 @@ const PROJECTS: Project[] = [
     title: "Oscilloscope",
     summary:
       "A custom VST programmed in FL Studio that converts stereo audio into XY data and plays it back on an oscilloscope as real-time vector graphics. Includes SVGs rendered as oscilloscope visuals.",
-    tags: ["FL Studio", "VST Programming", "Audio Engineering", "Oscilloscope", "Creative Coding"],
+    tags: ["FL Studio", "Audio Visualization", "Creative Coding"],
     preview: { type: "video", src: "/projects/oscilloscope/preview.mp4" },
     media: [
       { type: "video", src: "/projects/oscilloscope/preview.mp4" },
@@ -297,7 +298,7 @@ const PROJECTS: Project[] = [
     title: "Aces Wired",
     summary:
       "A short film set in a neon-lit dystopian future where four gambling addicts must expose a rigged poker system. A senior-year collaborative project using Premiere Pro, After Effects, and Blender.",
-    tags: ["Short Film", "Premiere Pro", "After Effects", "Blender", "VFX", "Narrative"],
+    tags: ["Blender", "After Effects", "Premiere Pro", "VFX", "Short Film"],
     timeframe: "Senior year, Chatham University",
     preview: { type: "image", src: "/projects/aces-wired/cover.jpg", alt: "Aces Wired film still" },
     media: [{ type: "video", src: "/projects/aces-wired/demo.mp4" }],
@@ -314,7 +315,7 @@ const PROJECTS: Project[] = [
     title: "Are You Engaged?",
     summary:
       "A multi-screen audiovisual installation across three stacked CRT televisions offering satirical, surrealist, and serious commentary on media consumption, political news, and online echo chambers.",
-    tags: ["Installation", "Premiere Pro", "TouchDesigner", "After Effects", "CRT", "Experimental", "Media Critique"],
+    tags: ["TouchDesigner", "After Effects", "Premiere Pro", "Installation", "Experimental"],
     preview: { type: "image", src: "/projects/are-you-engaged/cover.jpg", alt: "Are You Engaged installation still" },
     media: [{ type: "image", src: "/projects/are-you-engaged/cover.jpg", alt: "Are You Engaged installation still" }],
     links: { youtube: "https://www.youtube.com/watch?v=XI30lZMrOoA" },
@@ -331,7 +332,7 @@ const PROJECTS: Project[] = [
     title: "Handmade Animations",
     summary:
       "Frame-by-frame hand animation made for a handmade animation course. The first traditional animation work produced entirely by hand.",
-    tags: ["Hand Animation", "Frame-by-Frame", "Traditional Media", "Stop Motion"],
+    tags: ["Animation", "Traditional Media"],
     preview: { type: "image", src: "/projects/handmade-animations/cover.jpg", alt: "Handmade animation still" },
     media: [{ type: "video", src: "/projects/handmade-animations/demo.mp4" }],
     body: [
@@ -346,7 +347,7 @@ const PROJECTS: Project[] = [
     title: "SciFi VFX",
     summary:
       "A Blender VFX composite using Mixamo character animations and an Ian Hubert-inspired handheld camera workflow. Made in third year as a personal skills push.",
-    tags: ["Blender", "VFX", "Mixamo", "Compositing", "Camera Tracking"],
+    tags: ["Blender", "VFX", "Compositing"],
     preview: { type: "video", src: "/projects/vfx-kill-robot/demo.mp4" },
     media: [{ type: "video", src: "/projects/vfx-kill-robot/maniacSMALL.mp4" }],
     body: [
@@ -361,7 +362,7 @@ const PROJECTS: Project[] = [
     title: "VFX Spaceship",
     summary:
       "A sci-fi VFX sequence built in Blender using techniques from Ian Hubert's production workflow. A personal exploration of fantastical environments and practical-looking composites.",
-    tags: ["Blender", "VFX", "Sci-Fi", "Compositing", "Environment Design"],
+    tags: ["Blender", "VFX", "Compositing"],
     preview: { type: "video", src: "/projects/vfx-spaceship/demo.mp4" },
     media: [{ type: "video", src: "/projects/vfx-spaceship/demo.mp4" }],
     body: [
@@ -378,7 +379,7 @@ const PROJECTS: Project[] = [
     title: "Haptic Alarm System (Capstone)",
     summary:
       "Senior immersive media thesis project: a haptic-based alarm system designed to replace audio alerts in critical medical environments such as the NICU.",
-    tags: ["Haptics", "Arduino", "C#", ".NET", "Medical UX", "Embedded Systems", "Health Tech"],
+    tags: ["Arduino", "Physical Computing", "Haptics", "Prototyping"],
     timeframe: "Senior year thesis, Chatham University",
     preview: { type: "image", src: "/projects/capstone/cover.jpg", alt: "Haptic fob device photo" },
     media: [
@@ -402,7 +403,7 @@ const PROJECTS: Project[] = [
     title: "Clocky — Alarm Clock R&D",
     summary:
       "Mechanical engineering internship with Clocky, focused on developing a next-generation consumer alarm clock from concept through iterative hardware prototyping.",
-    tags: ["Product Design", "Mechanical Engineering", "Prototyping", "Internship", "Hardware"],
+    tags: ["Hardware", "Product Design", "Prototyping"],
     preview: { type: "image", src: "/projects/clocky-internship/coverimage.png", alt: "Clocky prototype photo" },
     media: [{ type: "video", src: "/projects/clocky-internship/demo.mp4" }],
     body: [
@@ -418,7 +419,7 @@ const PROJECTS: Project[] = [
     title: "Jimmy",
     summary:
       "A machine learning robot built around the concept of homeostasis. Uses a solar panel and photocell to seek light and self-sustain. Later repurposed as a cat toy.",
-    tags: ["Machine Learning", "Arduino", "Robotics", "Embedded Systems", "Solar", "Sensors"],
+    tags: ["Arduino", "Robotics", "Machine Learning"],
     preview: { type: "video", src: "/projects/jimmy/demo.mp4" },
     media: [{ type: "video", src: "/projects/jimmy/demo.mp4" }],
     body: [
@@ -433,7 +434,7 @@ const PROJECTS: Project[] = [
     title: "Knights of Isiah",
     summary:
       "A custom Raspberry Pi multitool built for a friend, featuring RFID scanning, a virtual pet, infrared signal cloning, and a microphone-based frequency reader.",
-    tags: ["Raspberry Pi", "RFID", "Infrared", "Hardware", "Embedded Systems", "Physical Computing"],
+    tags: ["Raspberry Pi", "Hardware", "Physical Computing"],
     preview: { type: "image", src: "/projects/knights-of-isiah/cover.png", alt: "Knights of Isiah device photo" },
     media: [
       { type: "video", src: "/projects/knights-of-isiah/doc1.mp4" },
@@ -453,7 +454,7 @@ const PROJECTS: Project[] = [
     title: "Plunter",
     summary:
       "A robot that translates houseplant moisture data into natural speech using an AI voice model trained on a professor's voice. Built with Raspberry Pi and Arduino Uno.",
-    tags: ["Raspberry Pi", "Arduino", "AI Voice", "Voice Synthesis", "Physical Computing", "IoT"],
+    tags: ["Raspberry Pi", "Arduino", "Physical Computing", "Machine Learning"],
     preview: { type: "image", src: "/projects/plunter/cover.png", alt: "Plunter robot photo" },
     media: [
       { type: "video", src: "/projects/plunter/demo.mp4" },
@@ -471,7 +472,7 @@ const PROJECTS: Project[] = [
     title: "Trash Bot",
     summary:
       "A four-hour rapid prototype built from cardboard, ultrasonic sensors, motors, and an Arduino Uno. The solar panel actually works.",
-    tags: ["Arduino", "Rapid Prototyping", "Robotics", "Physical Computing", "Cardboard", "Solar"],
+    tags: ["Arduino", "Robotics", "Physical Computing", "Prototyping"],
     preview: { type: "video", src: "/projects/trash-bot/demo.mp4" },
     media: [{ type: "video", src: "/projects/trash-bot/demo.mp4" }],
     body: [
@@ -488,7 +489,7 @@ const PROJECTS: Project[] = [
     title: "Teaching Assistant — Clayze Program",
     summary:
       "Full-time Teaching Assistant for a joint CMU / Chatham University immersive media program (2022–2024), coaching students in 3D modeling, Arduino, RealSense, LookingGlass, and Meta Quest development.",
-    tags: ["Teaching", "CMU", "Chatham", "Clayze", "Arduino", "Meta Quest", "LookingGlass", "3D Modeling"],
+    tags: ["Teaching", "Arduino", "3D"],
     timeframe: "2022–2024",
     preview: { type: "image", src: "/projects/clayze-ta/thumb.jpg", alt: "Clayze program in session" },
     media: [{ type: "video", src: "/projects/clayze-ta/demo.mp4" }],
@@ -508,7 +509,7 @@ const PROJECTS: Project[] = [
     title: "Projection Mapping — Disuko Rave",
     summary:
       "Designed and operated live projection visuals for a rave hosted by Angelo (Disuko Music), built in TouchDesigner using existing Disuko brand assets.",
-    tags: ["TouchDesigner", "Projection Mapping", "Live Event", "VJing", "Real-Time"],
+    tags: ["TouchDesigner", "Projection Mapping", "Live Performance"],
     preview: { type: "image", src: "/projects/projection-mapping-rave/thumb.jpg", alt: "Projection mapping at the Disuko rave" },
     media: [{ type: "video", src: "/projects/projection-mapping-rave/demo.mp4" }],
     body: [
@@ -524,7 +525,7 @@ const PROJECTS: Project[] = [
     title: "Projection Mapping — Library Show",
     summary:
       "Produced and operated a large-scale projection show on the front of the university library for the Immersive Media department, curating and preparing student artwork for architectural display.",
-    tags: ["Projection Mapping", "Event Production", "Immersive Media", "Curation", "Large Format"],
+    tags: ["Projection Mapping", "Event Production"],
     preview: { type: "image", src: "/projects/projection-mapping-show/CoverImage.png", alt: "Library projection show" },
     media: [{ type: "video", src: "/projects/projection-mapping-show/20240419_010326000_iOS.mov" }],
     body: [
@@ -539,7 +540,7 @@ const PROJECTS: Project[] = [
     title: "The Olkes Collection",
     summary:
       "Hired to photoscan and retexture a collection of African artifacts using industry-standard techniques, producing high-fidelity 3D models in FBX, GLB, PLY, and STL formats.",
-    tags: ["Photogrammetry", "3D Scanning", "Retexturing", "FBX", "GLB", "Cultural Preservation", "Polycam"],
+    tags: ["Photogrammetry", "3D", "Cultural Preservation"],
     preview: { type: "image", src: "/projects/olkes-collection/preview.png", alt: "Three heads mask 3D render" },
     media: [
       { type: "video", src: "/projects/olkes-collection/demo.mp4", caption: "Polycam scan preview — turntable render of the three heads mask" },
