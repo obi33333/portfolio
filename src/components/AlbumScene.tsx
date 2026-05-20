@@ -16,23 +16,13 @@ const REC_RADIUS = 17; // viewport %
 // Approximate viewport aspect ratio used to de-stretch y when computing fan angles
 const APPROX_ASPECT = 16 / 9;
 
-// All labels on the right — case swings left after opening
-const A_POSITIONS: [number, number][] = [
-  [78, 12],  // 0  Looking Glass
-  [81, 23],  // 1  See Tracks Think Train
-  [83, 34],  // 2  Song For The Trees
-  [83, 45],  // 3  Phone Call / Voicemail
-  [82, 56],  // 4  Graduation Song
-  [80, 67],  // 5  Losing Meaning
-  [77, 78],  // 6  Nonexistent Interlude
-];
+// Fixed vertical rail for each side — all labels left-align here
+const RAIL_A = 79;  // label left-edge x (%) for A-side
+const RAIL_B = 77;  // label left-edge x (%) for B-side
 
-const B_POSITIONS: [number, number][] = [
-  [79, 22],  // 0  Homeswitcher
-  [82, 38],  // 1  Graduation Song (Disuko)
-  [81, 54],  // 2  Glowing Screens
-  [79, 70],  // 3  Moving Out
-];
+// Only y-positions per track; x is the rail
+const A_Y: number[] = [12, 23, 34, 45, 56, 67, 78];
+const B_Y: number[] = [22, 38, 54, 70];
 
 // Groove radii as fraction of REC_RADIUS — outer track first, innermost last
 const A_RADII = [0.92, 0.80, 0.69, 0.58, 0.48, 0.39, 0.36];
@@ -333,9 +323,10 @@ export default function AlbumScene() {
     if (phaseRef.current === "playing") commitPhase("revealed");
   }, [commitPhase, commitSide]);
 
-  const isOpen    = phase === "revealed" || phase === "playing";
-  const tracks    = side === "A" ? ALBUM.tracks : ALBUM.bonusTracks;
-  const positions = side === "A" ? A_POSITIONS : B_POSITIONS;
+  const isOpen  = phase === "revealed" || phase === "playing";
+  const tracks  = side === "A" ? ALBUM.tracks : ALBUM.bonusTracks;
+  const yCoords = side === "A" ? A_Y : B_Y;
+  const rail    = side === "A" ? RAIL_A : RAIL_B;
 
   return (
     <div
@@ -383,10 +374,10 @@ export default function AlbumScene() {
             </filter>
           </defs>
           {tracks.map((_, i) => {
-            const [lx, ly] = positions[i];
-            const [sx, sy] = lineStart(i, side, lx, ly);
+            const ly = yCoords[i];
+            const [sx, sy] = lineStart(i, side, rail, ly);
             const isActive = activeTrack === i;
-            const ex = lx - 5;
+            const ex = rail - 1.2;
             const ey = ly;
             return (
               <line
@@ -412,82 +403,73 @@ export default function AlbumScene() {
       {/* ── Song labels ──────────────────────────────────────────────── */}
       {isOpen &&
         tracks.map((t, i) => {
-          const [lx, ly] = positions[i];
+          const ly = yCoords[i];
           const isActive = activeTrack === i;
 
           return (
-            /* Zero-height anchor at (lx%, ly%) — content stacks upward from here */
             <div
               key={`${side}-${t.title}`}
               style={{
                 position:  "absolute",
-                left:      `${lx}%`,
+                left:      `${rail}%`,
                 top:       `${ly}%`,
-                height:    0,
+                transform: "translateY(-50%)",
+                paddingLeft: "10px",
                 animation: `fade-up 0.4s ease-out ${i * 0.07 + 0.35}s both`,
               }}
             >
-              {/* Stack grows upward: description → artists → title (bottom) */}
-              <div
-                style={{
-                  position:  "absolute",
-                  bottom:    0,
-                  right:     0,
-                  transform: "translateX(calc(-100% - 40px))",
-                  width:     "200px",
-                  textAlign: "right",
-                }}
+              {/* Title */}
+              <button
+                onClick={() => handleSongClick(i)}
+                className="focus:outline-none block"
+                style={{ textAlign: "left" }}
               >
-                {/* Description — fixed-width, independent of title */}
-                {isActive && t.description && (
-                  <div
-                    style={{
-                      fontSize:   "11px",
-                      lineHeight: "1.6",
-                      color:      "rgba(0,0,0,0.42)",
-                      animation:  "fade-up 0.3s ease-out both",
-                      marginBottom: "3px",
-                    }}
-                  >
-                    {t.description}
-                  </div>
-                )}
-
-                {/* Artists — above title */}
-                {t.artists && t.artists.length > 0 && (
-                  <div
-                    style={{
-                      fontSize:      "11px",
-                      letterSpacing: "0.04em",
-                      color:         isActive ? "rgba(0,0,0,0.5)" : "rgba(0,0,0,0.3)",
-                      transition:    "color 0.15s",
-                      marginBottom:  "2px",
-                    }}
-                  >
-                    {t.artists.join(", ")}
-                  </div>
-                )}
-
-                {/* Title — bottommost, always anchored at ly% */}
-                <button
-                  onClick={() => handleSongClick(i)}
-                  className="focus:outline-none"
-                  style={{ display: "block", width: "100%", textAlign: "right" }}
+                <span
+                  style={{
+                    display:    "block",
+                    fontSize:   "13px",
+                    fontWeight: 600,
+                    lineHeight: "1.25",
+                    color:      isActive ? "rgba(0,0,0,0.9)" : "rgba(0,0,0,0.55)",
+                    transition: "color 0.15s",
+                    whiteSpace: "nowrap",
+                  }}
                 >
-                  <span
-                    style={{
-                      display:    "block",
-                      fontSize:   "14px",
-                      fontWeight: 600,
-                      lineHeight: "1.2",
-                      color:      isActive ? "rgba(0,0,0,0.9)" : "rgba(0,0,0,0.55)",
-                      transition: "color 0.15s",
-                    }}
-                  >
-                    {t.title}
-                  </span>
-                </button>
-              </div>
+                  {t.title}
+                </span>
+              </button>
+
+              {/* Artists */}
+              {t.artists && t.artists.length > 0 && (
+                <div
+                  style={{
+                    fontSize:      "10px",
+                    letterSpacing: "0.05em",
+                    color:         isActive ? "rgba(0,0,0,0.45)" : "rgba(0,0,0,0.28)",
+                    transition:    "color 0.15s",
+                    marginTop:     "1px",
+                    whiteSpace:    "nowrap",
+                  }}
+                >
+                  {t.artists.join(", ")}
+                </div>
+              )}
+
+              {/* Description — only when active */}
+              {isActive && t.description && (
+                <div
+                  style={{
+                    fontSize:   "10px",
+                    lineHeight: "1.55",
+                    color:      "rgba(0,0,0,0.4)",
+                    animation:  "fade-up 0.3s ease-out both",
+                    marginTop:  "4px",
+                    maxWidth:   "180px",
+                  }}
+                >
+                  {t.description}
+                </div>
+              )}
             </div>
           );
         })}

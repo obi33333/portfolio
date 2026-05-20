@@ -145,7 +145,10 @@ export default function HeadshotKiosk({
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerCancel}
         onPointerLeave={() => {
-          if (!isDraggingRef.current) lastTsRef.current = null;
+          if (!isDraggingRef.current) {
+            lastTsRef.current = null;
+            targetAngleRef.current = null;
+          }
         }}
       >
         <div

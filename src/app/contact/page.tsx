@@ -11,13 +11,13 @@ export default function ContactPage() {
   return (
     <main className="relative min-h-[calc(100vh-3.5rem)] bg-black overflow-hidden">
 
-      {/* Cat image — starts one third down the page */}
-      <div className="absolute inset-x-0 bottom-0 top-[28%] sm:inset-0">
+      {/* Cat image — starts partway down the page */}
+      <div className="absolute inset-x-0 bottom-0 top-[28%] sm:top-[22%]">
         <Image
           src="/cat.png"
           alt=""
           fill
-          className="object-cover object-top sm:object-cover sm:[object-position:center_35%]"
+          className="object-cover object-top"
           priority
         />
       </div>
@@ -45,6 +45,10 @@ export default function ContactPage() {
             Bernsteinobadiah@gmail.com
           </p>
         </div>
+
+        <p className="mt-auto pb-6 text-xs text-white/30">
+          shot by Liam Lyons
+        </p>
       </div>
 
     </main>
