@@ -8,37 +8,37 @@ import { ALBUM } from "@/content/album";
 type Phase = "idle" | "opening" | "revealed" | "playing";
 type Side  = "A" | "B";
 
-// Approximate visual position of the record center after the case opens (viewport %)
-const REC_CX     = 53;
-const REC_CY     = 50;
-const REC_RADIUS = 17; // viewport %
+// Rail x-position as a multiple of the record's projected radius, past its centre.
+// These replace the old hardcoded RAIL_A/RAIL_B viewport-% constants.
+const RAIL_A_FRAC = 1.55;
+const RAIL_B_FRAC = 1.42;
 
-// Approximate viewport aspect ratio used to de-stretch y when computing fan angles
-const APPROX_ASPECT = 16 / 9;
-
-// Fixed vertical rail for each side — all labels left-align here
-const RAIL_A = 79;  // label left-edge x (%) for A-side
-const RAIL_B = 77;  // label left-edge x (%) for B-side
-
-// Only y-positions per track; x is the rail
+// Y-positions per track (viewport %) — unchanged from original
 const A_Y: number[] = [12, 23, 34, 45, 56, 67, 78];
 const B_Y: number[] = [22, 38, 54, 70];
 
-// Groove radii as fraction of REC_RADIUS — outer track first, innermost last
+// Groove radii as fraction of the record's projected radius — outer track first
 const A_RADII = [0.92, 0.80, 0.69, 0.58, 0.48, 0.39, 0.36];
 const B_RADII = [0.88, 0.72, 0.57, 0.43];
 
-// Fan from the groove edge at the angle pointing toward each label.
-// De-stretch y by APPROX_ASPECT so the angle is computed in pixel space.
-function lineStart(idx: number, side: Side, labelX: number, labelY: number): [number, number] {
+/**
+ * Compute where a line should leave the groove edge.
+ * All coords are in viewport-%; aspect (w/h) de-stretches y so the angle is
+ * computed in pixel space rather than %-space.
+ */
+function lineStart(
+  idx: number, side: Side,
+  labelX: number, labelY: number,
+  cx: number, cy: number, radius: number, aspect: number,
+): [number, number] {
   const radii = side === "A" ? A_RADII : B_RADII;
-  const r     = (radii[idx] ?? 0.5) * REC_RADIUS;
-  const dx    = labelX - REC_CX;
-  const dy    = (labelY - REC_CY) / APPROX_ASPECT;
+  const r     = (radii[idx] ?? 0.5) * radius;
+  const dx    = labelX - cx;
+  const dy    = (labelY - cy) / aspect;
   const len   = Math.sqrt(dx * dx + dy * dy) || 1;
   return [
-    REC_CX + r * (dx / len),
-    REC_CY + r * (dy / len) * APPROX_ASPECT,
+    cx + r * (dx / len),
+    cy + r * (dy / len) * aspect,
   ];
 }
 
@@ -51,10 +51,19 @@ export default function AlbumScene() {
   const [activeTrack, setActiveTrack] = useState<number | null>(null);
   const [side,        setSide]        = useState<Side>("A");
 
+  // Dynamically computed from Three.js bounding-box projection; fallback to
+  // the original desktop estimates so labels render before the first resize.
+  const [overlay, setOverlay] = useState({ cx: 53, cy: 50, radius: 17, aspect: 16 / 9 });
+
   const phaseRef       = useRef<Phase>("idle");
   const activeTrackRef = useRef<number | null>(null);
   const sideRef        = useRef<Side>("A");
   const flipRef        = useRef({ current: 0, target: 0 });
+
+  // Three.js objects — populated inside the useEffect after the model loads.
+  const cameraRefInner      = useRef<THREE.PerspectiveCamera | null>(null);
+  const recordGroupRefInner = useRef<THREE.Object3D | null>(null);
+  const containerSizeRef    = useRef({ w: 0, h: 0 });
 
   const commitPhase = useCallback((p: Phase) => {
     phaseRef.current = p;
@@ -64,6 +73,49 @@ export default function AlbumScene() {
   const commitSide = useCallback((s: Side) => {
     sideRef.current = s;
     setSide(s);
+  }, []);
+
+  /**
+   * Project the record's 3D bounding box onto the screen and store
+   * cx / cy / radius / aspect in React state so the SVG overlay adapts
+   * to any viewport size or device.
+   */
+  const updateOverlay = useCallback(() => {
+    const cam = cameraRefInner.current;
+    const rec = recordGroupRefInner.current;
+    const { w, h } = containerSizeRef.current;
+    if (!cam || !rec || !w || !h) return;
+
+    const box = new THREE.Box3().setFromObject(rec);
+    const { min, max } = box;
+    const corners: THREE.Vector3[] = [];
+    for (let xi = 0; xi < 2; xi++)
+      for (let yi = 0; yi < 2; yi++)
+        for (let zi = 0; zi < 2; zi++)
+          corners.push(new THREE.Vector3(
+            xi ? max.x : min.x,
+            yi ? max.y : min.y,
+            zi ? max.z : min.z,
+          ));
+
+    let minVX = Infinity, maxVX = -Infinity;
+    let minVY = Infinity, maxVY = -Infinity;
+    for (const corner of corners) {
+      const v  = corner.clone().project(cam);
+      const vx = (v.x + 1) / 2 * 100;
+      const vy = (1 - v.y) / 2 * 100;
+      if (vx < minVX) minVX = vx;
+      if (vx > maxVX) maxVX = vx;
+      if (vy < minVY) minVY = vy;
+      if (vy > maxVY) maxVY = vy;
+    }
+
+    setOverlay({
+      cx:     (minVX + maxVX) / 2,
+      cy:     (minVY + maxVY) / 2,
+      radius: (maxVX - minVX) / 2,
+      aspect: w / h,
+    });
   }, []);
 
   useEffect(() => {
@@ -87,6 +139,7 @@ export default function AlbumScene() {
       const scene  = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(28, 1, 0.01, 100);
       camera.position.set(0, 0, 5);
+      cameraRefInner.current = camera;  // expose for updateOverlay
 
       const resize = () => {
         const w = container.clientWidth;
@@ -94,6 +147,8 @@ export default function AlbumScene() {
         renderer.setSize(w, h, false);
         camera.aspect = w / h;
         camera.updateProjectionMatrix();
+        containerSizeRef.current = { w, h };
+        updateOverlay();
       };
 
       // ── Lights ────────────────────────────────────────────────────────────
@@ -188,6 +243,9 @@ export default function AlbumScene() {
       gltfs[0].scene.position.sub(recLocalCenter);
       recordPivot.add(gltfs[0].scene);
 
+      // Expose recordPivot for updateOverlay
+      recordGroupRefInner.current = recordPivot;
+
       // ── Raycasting ────────────────────────────────────────────────────────
       const raycaster = new THREE.Raycaster();
       const ptrNDC    = new THREE.Vector2();
@@ -232,7 +290,7 @@ export default function AlbumScene() {
       canvas.addEventListener("pointerdown", onPointerDown);
       canvas.addEventListener("pointerup",   onPointerUp);
 
-      // ── Resize ────────────────────────────────────────────────────────────
+      // ── Resize (called once here; also wired to ResizeObserver below) ──────
       resize();
       const ro = new ResizeObserver(resize);
       ro.observe(container);
@@ -277,7 +335,7 @@ export default function AlbumScene() {
       cancelAnimationFrame(frame);
       cleanup?.();
     };
-  }, [commitPhase]);
+  }, [commitPhase, updateOverlay]);
 
   // ── Song click ─────────────────────────────────────────────────────────────
   const handleSongClick = useCallback(
@@ -312,6 +370,23 @@ export default function AlbumScene() {
     [commitPhase]
   );
 
+  // ── Auto-advance to next track when the current one ends ──────────────────
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handleEnded = () => {
+      const idx = activeTrackRef.current;
+      if (idx === null) return;
+      const list = sideRef.current === "A" ? ALBUM.tracks : ALBUM.bonusTracks;
+      const nextIdx = (idx + 1) % list.length;
+      handleSongClick(nextIdx);
+    };
+
+    audio.addEventListener("ended", handleEnded);
+    return () => audio.removeEventListener("ended", handleEnded);
+  }, [handleSongClick]);
+
   // ── Flip ───────────────────────────────────────────────────────────────────
   const handleFlip = useCallback(() => {
     const next: Side = sideRef.current === "A" ? "B" : "A";
@@ -323,10 +398,11 @@ export default function AlbumScene() {
     if (phaseRef.current === "playing") commitPhase("revealed");
   }, [commitPhase, commitSide]);
 
-  const isOpen  = phase === "revealed" || phase === "playing";
-  const tracks  = side === "A" ? ALBUM.tracks : ALBUM.bonusTracks;
-  const yCoords = side === "A" ? A_Y : B_Y;
-  const rail    = side === "A" ? RAIL_A : RAIL_B;
+  const isOpen   = phase === "revealed" || phase === "playing";
+  const tracks   = side === "A" ? ALBUM.tracks : ALBUM.bonusTracks;
+  const yCoords  = side === "A" ? A_Y : B_Y;
+  const railFrac = side === "A" ? RAIL_A_FRAC : RAIL_B_FRAC;
+  const rail     = overlay.cx + railFrac * overlay.radius;
 
   return (
     <div
@@ -361,9 +437,12 @@ export default function AlbumScene() {
         </p>
       )}
 
-      {/* ── SVG lines ────────────────────────────────────────────────── */}
+      {/* ── SVG lines — desktop only ──────────────────────────────────── */}
       {isOpen && (
-        <svg className="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          className="absolute inset-0 w-full h-full pointer-events-none hidden md:block"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <defs>
             <filter id="line-glow" x="-80%" y="-80%" width="260%" height="260%">
               <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
@@ -375,15 +454,16 @@ export default function AlbumScene() {
           </defs>
           {tracks.map((_, i) => {
             const ly = yCoords[i];
-            const [sx, sy] = lineStart(i, side, rail, ly);
+            const [sx, sy] = lineStart(
+              i, side, rail, ly,
+              overlay.cx, overlay.cy, overlay.radius, overlay.aspect,
+            );
             const isActive = activeTrack === i;
-            const ex = rail - 1.2;
-            const ey = ly;
             return (
               <line
                 key={`${side}-${i}`}
-                x1={`${sx}%`} y1={`${sy}%`}
-                x2={`${ex}%`} y2={`${ey}%`}
+                x1={`${sx}%`}        y1={`${sy}%`}
+                x2={`${rail - 1.2}%`} y2={`${ly}%`}
                 stroke={isActive ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.5)"}
                 strokeWidth={isActive ? 3 : 1.5}
                 strokeLinecap="round"
@@ -400,87 +480,136 @@ export default function AlbumScene() {
         </svg>
       )}
 
-      {/* ── Song labels ──────────────────────────────────────────────── */}
-      {isOpen &&
-        tracks.map((t, i) => {
-          const ly = yCoords[i];
-          const isActive = activeTrack === i;
-
-          return (
-            <div
-              key={`${side}-${t.title}`}
-              style={{
-                position:  "absolute",
-                left:      `${rail}%`,
-                top:       `${ly}%`,
-                transform: "translateY(-50%)",
-                paddingLeft: "10px",
-                animation: `fade-up 0.4s ease-out ${i * 0.07 + 0.35}s both`,
-              }}
-            >
-              {/* Title */}
-              <button
-                onClick={() => handleSongClick(i)}
-                className="focus:outline-none block"
-                style={{ textAlign: "left" }}
+      {/* ── Song labels — desktop only ────────────────────────────────── */}
+      {isOpen && (
+        <div className="hidden md:block">
+          {tracks.map((t, i) => {
+            const ly       = yCoords[i];
+            const isActive = activeTrack === i;
+            return (
+              <div
+                key={`${side}-${t.title}`}
+                style={{
+                  position:    "absolute",
+                  left:        `${rail}%`,
+                  top:         `${ly}%`,
+                  transform:   "translateY(-50%)",
+                  paddingLeft: "10px",
+                  animation:   `fade-up 0.4s ease-out ${i * 0.07 + 0.35}s both`,
+                }}
               >
-                <span
+                <button
+                  onClick={() => handleSongClick(i)}
+                  className="focus:outline-none block"
+                  style={{ textAlign: "left" }}
+                >
+                  <span
+                    style={{
+                      display:    "block",
+                      fontSize:   "13px",
+                      fontWeight: 600,
+                      lineHeight: "1.25",
+                      color:      isActive ? "rgba(0,0,0,0.9)" : "rgba(0,0,0,0.55)",
+                      transition: "color 0.15s",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {t.title}
+                  </span>
+                </button>
+
+                {t.artists && t.artists.length > 0 && (
+                  <div
+                    style={{
+                      fontSize:      "10px",
+                      letterSpacing: "0.05em",
+                      color:         isActive ? "rgba(0,0,0,0.45)" : "rgba(0,0,0,0.28)",
+                      transition:    "color 0.15s",
+                      marginTop:     "1px",
+                      whiteSpace:    "nowrap",
+                    }}
+                  >
+                    {t.artists.join(", ")}
+                  </div>
+                )}
+
+                {isActive && t.description && (
+                  <div
+                    style={{
+                      fontSize:   "12px",
+                      lineHeight: "1.6",
+                      color:      "rgba(0,0,0,0.45)",
+                      animation:  "fade-up 0.3s ease-out both",
+                      marginTop:  "5px",
+                      maxWidth:   "200px",
+                    }}
+                  >
+                    {t.description}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* ── Mobile track list — small screens only ────────────────────── */}
+      {isOpen && (
+        <div className="md:hidden absolute bottom-4 left-0 right-0 flex flex-col items-center gap-3">
+          {/* Horizontal scrolling pill strip */}
+          <div
+            className="w-full flex gap-2 overflow-x-auto px-4 pb-1"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {tracks.map((t, i) => {
+              const isActive = activeTrack === i;
+              return (
+                <button
+                  key={`mob-${side}-${i}`}
+                  onClick={() => handleSongClick(i)}
+                  className="flex-none rounded-full px-4 py-2 text-xs font-medium whitespace-nowrap transition-colors"
                   style={{
-                    display:    "block",
-                    fontSize:   "13px",
-                    fontWeight: 600,
-                    lineHeight: "1.25",
-                    color:      isActive ? "rgba(0,0,0,0.9)" : "rgba(0,0,0,0.55)",
-                    transition: "color 0.15s",
-                    whiteSpace: "nowrap",
+                    background:          isActive ? "rgba(0,0,0,0.78)" : "rgba(255,255,255,0.72)",
+                    color:               isActive ? "rgba(255,255,255,0.92)" : "rgba(0,0,0,0.6)",
+                    border:              isActive ? "none" : "1px solid rgba(0,0,0,0.12)",
+                    backdropFilter:      "blur(8px)",
+                    WebkitBackdropFilter:"blur(8px)",
                   }}
                 >
                   {t.title}
-                </span>
-              </button>
+                </button>
+              );
+            })}
+          </div>
 
-              {/* Artists */}
-              {t.artists && t.artists.length > 0 && (
-                <div
-                  style={{
-                    fontSize:      "10px",
-                    letterSpacing: "0.05em",
-                    color:         isActive ? "rgba(0,0,0,0.45)" : "rgba(0,0,0,0.28)",
-                    transition:    "color 0.15s",
-                    marginTop:     "1px",
-                    whiteSpace:    "nowrap",
-                  }}
-                >
-                  {t.artists.join(", ")}
-                </div>
-              )}
+          {/* Active track description */}
+          {activeTrack !== null && tracks[activeTrack]?.description && (
+            <p
+              className="px-6 text-xs leading-relaxed text-center"
+              style={{ color: "rgba(0,0,0,0.45)", animation: "fade-up 0.3s ease-out both" }}
+            >
+              {tracks[activeTrack].description}
+            </p>
+          )}
 
-              {/* Description — only when active */}
-              {isActive && t.description && (
-                <div
-                  style={{
-                    fontSize:   "10px",
-                    lineHeight: "1.55",
-                    color:      "rgba(0,0,0,0.4)",
-                    animation:  "fade-up 0.3s ease-out both",
-                    marginTop:  "4px",
-                    maxWidth:   "180px",
-                  }}
-                >
-                  {t.description}
-                </div>
-              )}
-            </div>
-          );
-        })}
+          {/* Flip button (mobile) */}
+          <button
+            onClick={handleFlip}
+            className="text-[10px] tracking-widest uppercase transition-colors duration-200"
+            style={{ color: "rgba(0,0,0,0.32)" }}
+          >
+            {side === "A" ? "↓ B-Side" : "↑ A-Side"}
+          </button>
+        </div>
+      )}
 
-      {/* ── Flip button — fixed at bottom center ─────────────────────── */}
+      {/* ── Flip button — desktop only ────────────────────────────────── */}
       {isOpen && (
         <button
           onClick={handleFlip}
-          className="absolute left-1/2 text-[10px] tracking-widest uppercase transition-colors duration-200 hover:text-black/60"
+          className="hidden md:block absolute left-1/2 text-[10px] tracking-widest uppercase transition-colors duration-200 hover:text-black/60"
           style={{
-            bottom:    "28px",
+            bottom:    "48px",
             transform: "translateX(-50%)",
             color:     "rgba(0,0,0,0.32)",
             animation: "fade-up 0.4s ease-out 0.6s both",
