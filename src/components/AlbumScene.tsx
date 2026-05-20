@@ -17,9 +17,10 @@ const RAIL_B_FRAC = 1.42;
 const A_Y: number[] = [12, 23, 34, 45, 56, 67, 78];
 const B_Y: number[] = [22, 38, 54, 70];
 
-// Groove radii as fraction of the record's projected radius — outer track first
-const A_RADII = [0.92, 0.80, 0.69, 0.58, 0.48, 0.39, 0.36];
-const B_RADII = [0.88, 0.72, 0.57, 0.43];
+// Groove radii as fraction of the record's projected radius — outer track first.
+// Values are kept near the visual edge so lines always appear to touch the record.
+const A_RADII = [0.97, 0.92, 0.87, 0.81, 0.74, 0.67, 0.62];
+const B_RADII = [0.96, 0.88, 0.79, 0.70];
 
 /**
  * Compute where a line should leave the groove edge.
