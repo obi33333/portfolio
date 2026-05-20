@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 const MODEL_PATHS = [
   "/album/model/Parts/record.glb",
@@ -20,12 +23,6 @@ export default function PartsViewer({ className }: { className?: string }) {
     let cleanupFn: (() => void) | undefined;
 
     (async () => {
-      const [THREE, { GLTFLoader }, { OrbitControls }] = await Promise.all([
-        import("three"),
-        import("three/examples/jsm/loaders/GLTFLoader.js"),
-        import("three/examples/jsm/controls/OrbitControls.js"),
-      ]);
-
       if (disposed) return;
 
       const w = canvas.clientWidth || 460;
