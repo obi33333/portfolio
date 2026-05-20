@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { ALBUM } from "@/content/album";
 
 type Phase = "idle" | "opening" | "revealed" | "playing";
@@ -84,10 +86,6 @@ export default function AlbumScene() {
     let cleanup: (() => void) | undefined;
 
     (async () => {
-      const [THREE, { GLTFLoader }] = await Promise.all([
-        import("three"),
-        import("three/examples/jsm/loaders/GLTFLoader.js"),
-      ]);
       if (disposed) return;
 
       // ── Renderer ──────────────────────────────────────────────────────────
