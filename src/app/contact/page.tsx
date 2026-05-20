@@ -12,7 +12,7 @@ export default function ContactPage() {
     <main className="relative min-h-[calc(100vh-3.5rem)] bg-black overflow-hidden">
 
       {/* Cat image — starts partway down the page */}
-      <div className="absolute inset-x-0 bottom-0 top-[28%] sm:top-[12%] lg:top-[4%]">
+      <div className="absolute inset-x-0 bottom-0 top-[28%] sm:top-[12%] lg:top-[-8%]">
         <Image
           src="/cat.png"
           alt=""
