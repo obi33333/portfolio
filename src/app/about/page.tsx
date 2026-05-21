@@ -28,10 +28,7 @@ export default function AboutPage() {
       </Link>
 
       <header className="mt-8 max-w-2xl">
-        <p className="text-xs font-semibold uppercase tracking-[0.32em] text-black/55">
-          About
-        </p>
-        <h1 className="mt-4 text-4xl font-semibold tracking-tight text-black/85">
+        <h1 className="text-4xl font-semibold tracking-tight text-black/85">
           About me
         </h1>
       </header>
@@ -66,7 +63,7 @@ export default function AboutPage() {
         <div className="mt-6 flex justify-start">
           <HeadshotKiosk
             images={HEADSHOTS}
-            className="h-[320px] w-full max-w-[340px]"
+            className="h-[380px] w-full max-w-[400px]"
             secondsPerRevolution={90}
           />
         </div>

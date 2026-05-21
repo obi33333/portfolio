@@ -25,7 +25,7 @@ export default function AlbumModelLink({
 
   return (
     <div
-      className={["group relative flex flex-col", className].filter(Boolean).join(" ")}
+      className={["group relative flex flex-col cursor-pointer transition-transform duration-300 hover:scale-[1.02]", className].filter(Boolean).join(" ")}
       aria-label="Interactive album model"
     >
       <ModelViewer
@@ -33,6 +33,7 @@ export default function AlbumModelLink({
         alt={alt}
         cameraControls
         autoRotate
+        loading="eager"
         disableZoom={false}
         // 90deg X tilts flat model upright (right-side up); 180deg Y keeps it oriented correctly.
         // Camera azimuth 205deg (=25deg + 180) puts the camera on the front-face side.

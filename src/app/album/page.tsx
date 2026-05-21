@@ -12,10 +12,10 @@ export default function AlbumPage() {
     <main className="relative flex-1">
       {/* Title overlay — top center */}
       <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 pointer-events-none select-none text-center">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-black/35">
+        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-black/40">
           Album
         </p>
-        <h1 className="mt-0.5 text-sm font-semibold tracking-tight text-black/50">
+        <h1 className="mt-1 text-lg font-semibold tracking-tight text-black/65">
           {ALBUM.title}
         </h1>
       </div>

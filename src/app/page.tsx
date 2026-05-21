@@ -7,6 +7,15 @@ import AlbumModelLink from "@/components/AlbumModelLink";
 import HeadshotKiosk from "@/components/HeadshotKiosk";
 import { ALBUM } from "@/content/album";
 
+const HEADSHOTS = [
+  { src: "/headshots/R5__2022.jpg", alt: "Headshot" },
+  { src: "/headshots/R5__2023.jpg", alt: "Headshot" },
+  { src: "/headshots/R5__2028.jpg", alt: "Headshot" },
+  { src: "/headshots/R5__2034.jpg", alt: "Headshot" },
+  { src: "/headshots/R5__2037.jpg", alt: "Headshot" },
+  { src: "/headshots/R5__2100.jpg", alt: "Headshot" },
+];
+
 const PROJECT_SECTIONS = [
   {
     slug: "one-day",
@@ -34,15 +43,6 @@ const PROJECT_SECTIONS = [
   },
 ];
 
-const HEADSHOTS = [
-  { src: "/headshots/R5__2022.jpg", alt: "Headshot" },
-  { src: "/headshots/R5__2023.jpg", alt: "Headshot" },
-  { src: "/headshots/R5__2028.jpg", alt: "Headshot" },
-  { src: "/headshots/R5__2034.jpg", alt: "Headshot" },
-  { src: "/headshots/R5__2037.jpg", alt: "Headshot" },
-  { src: "/headshots/R5__2100.jpg", alt: "Headshot" },
-];
-
 export default function Home() {
   // Default to "one-day" so the card is always visible on load.
   // State never resets to null — hovering a pill switches the active section,
@@ -58,10 +58,9 @@ export default function Home() {
         {/* ── Left: name label + CTAs + project tabs ── */}
         <div className="flex flex-col gap-6">
 
-          {/* Name as a refined label — matches "Headshots" / "Album" typography */}
-          <p className="text-base font-semibold uppercase tracking-[0.22em] text-black/55">
+          <h1 className="text-3xl font-bold tracking-tight text-black/85">
             Obadiah Bernstein
-          </p>
+          </h1>
 
           {/* Section pills + persistent preview card.
               The card is absolute so it never shifts the grid or contact section.
@@ -155,6 +154,7 @@ export default function Home() {
             Get in touch
           </Link>
         </div>
+        <p className="mt-6 text-xs text-black/30">Last updated May 2026</p>
       </div>
 
     </main>
