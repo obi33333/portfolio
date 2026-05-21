@@ -66,6 +66,8 @@ export const ALBUM = {
     {
       title: "Nonexistent Interlude",
       description: "Work in progress.",
+      src: "/album/tracks/Interlude.mp3",
+      format: "mp3",
     },
   ] satisfies AlbumTrack[],
   bonusTracks: [
