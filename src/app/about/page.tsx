@@ -63,10 +63,10 @@ export default function AboutPage() {
         <p className="text-xs font-semibold uppercase tracking-[0.32em] text-black/55">
           Headshots
         </p>
-        <div className="mt-6 flex justify-start">
+        <div className="mt-6 flex justify-center">
           <HeadshotKiosk
             images={HEADSHOTS}
-            className="h-[320px] w-full max-w-[340px]"
+            className="h-[380px] w-full max-w-[400px]"
             secondsPerRevolution={90}
           />
         </div>

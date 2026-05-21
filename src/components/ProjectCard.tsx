@@ -10,6 +10,22 @@ function CardMedia({ project }: { project: Project }) {
 
   if (!project.preview) return null;
 
+  if (project.preview.type === "gif") {
+    return (
+      <div className="h-44 overflow-hidden bg-black/5">
+        <video
+          src={project.preview.src}
+          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+          autoPlay
+          muted
+          playsInline
+          preload="auto"
+          loop
+        />
+      </div>
+    );
+  }
+
   if (project.preview.type === "video") {
     return (
       <div className="h-44 overflow-hidden bg-black/5">

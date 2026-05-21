@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import AlbumModelLink from "@/components/AlbumModelLink";
-import HeadshotKiosk from "@/components/HeadshotKiosk";
 import { ALBUM } from "@/content/album";
 
 const PROJECT_SECTIONS = [
@@ -34,15 +33,6 @@ const PROJECT_SECTIONS = [
   },
 ];
 
-const HEADSHOTS = [
-  { src: "/headshots/R5__2022.jpg", alt: "Headshot" },
-  { src: "/headshots/R5__2023.jpg", alt: "Headshot" },
-  { src: "/headshots/R5__2028.jpg", alt: "Headshot" },
-  { src: "/headshots/R5__2034.jpg", alt: "Headshot" },
-  { src: "/headshots/R5__2037.jpg", alt: "Headshot" },
-  { src: "/headshots/R5__2100.jpg", alt: "Headshot" },
-];
-
 export default function Home() {
   // Default to "one-day" so the card is always visible on load.
   // State never resets to null — hovering a pill switches the active section,
@@ -58,10 +48,9 @@ export default function Home() {
         {/* ── Left: name label + CTAs + project tabs ── */}
         <div className="flex flex-col gap-6">
 
-          {/* Name as a refined label — matches "Headshots" / "Album" typography */}
-          <p className="text-base font-semibold uppercase tracking-[0.22em] text-black/55">
+          <h1 className="text-3xl font-bold tracking-tight text-black/85">
             Obadiah Bernstein
-          </p>
+          </h1>
 
           {/* Section pills + persistent preview card.
               The card is absolute so it never shifts the grid or contact section.
@@ -109,21 +98,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ── Right: headshots + album (sidebar) ── */}
+        {/* ── Right: album (sidebar) ── */}
         <div className="flex flex-col gap-10">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-black/55">
-              Headshots
-            </p>
-            <div className="mt-3">
-              <HeadshotKiosk
-                images={HEADSHOTS}
-                className="h-[300px] w-full max-w-[340px]"
-                secondsPerRevolution={90}
-              />
-            </div>
-          </div>
-
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-black/55">
               Album
@@ -132,7 +108,7 @@ export default function Home() {
             <AlbumModelLink
               src={ALBUM.modelSrc}
               alt={`${ALBUM.title} model`}
-              modelHeight={380}
+              modelHeight={460}
             />
           </div>
         </div>
@@ -155,6 +131,7 @@ export default function Home() {
             Get in touch
           </Link>
         </div>
+        <p className="mt-6 text-xs text-black/30">Last updated May 2026</p>
       </div>
 
     </main>

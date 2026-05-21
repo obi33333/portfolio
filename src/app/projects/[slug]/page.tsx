@@ -41,6 +41,21 @@ function MediaItem({
   title: string;
   keepAudio?: boolean;
 }) {
+  if (item.type === "gif") {
+    return (
+      <div className="overflow-hidden rounded-xl border border-black/10 bg-black/5">
+        <video
+          src={item.src}
+          className="w-full"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+        />
+      </div>
+    );
+  }
   if (item.type === "video") {
     return (
       <div className="overflow-hidden rounded-xl border border-black/10 bg-black/5">
@@ -157,7 +172,7 @@ export default async function ProjectDetailPage({
                 target="_blank"
                 rel="noreferrer"
               >
-                Watch ↗
+                Watch on YouTube ↗
               </a>
             )}
             {project.links.repo && (

@@ -26,7 +26,7 @@ export default function FilmVfxSectionPage() {
         </h1>
         <p className="mt-4 max-w-xl text-base leading-7 text-black/65">
           Video, compositing, and post-production work — short films, multi-screen installations,
-          VFX composites, and animation across Blender, After Effects, Premiere Pro, and TouchDesigner.
+          VFX composites, and animation using Blender and TouchDesigner.
         </p>
       </header>
 
