@@ -8,38 +8,37 @@ import { ALBUM } from "@/content/album";
 type Phase = "idle" | "opening" | "revealed" | "playing";
 type Side  = "A" | "B";
 
-// Approximate visual position of the record center after the case opens (viewport %)
+// Fixed label-rail x-positions (viewport %) — empirically correct for desktop.
+// Mobile uses a pill list instead, so these only apply at md+ breakpoints.
+const RAIL_A = 79;
+const RAIL_B = 77;
+
+// Y-positions per track (viewport %)
+const A_Y: number[] = [12, 23, 34, 45, 56, 67, 78];
+const B_Y: number[] = [22, 38, 54, 70];
+
+// Visual centre and radius of the record on a desktop viewport (viewport %)
 const REC_CX     = 53;
 const REC_CY     = 50;
-const REC_RADIUS = 17; // viewport %
+const REC_RADIUS = 17;
 
-// Approximate viewport aspect ratio used to de-stretch y when computing fan angles
+// Scratch physics constants — must stay in sync with the tick-loop spin rate
+const NORMAL_SPIN = Math.PI * 0.8; // rad/s: the record's autonomous spin speed
+const DRAG_TO_RAD = 0.05;          // px → rad conversion (matches recordPivot update)
+
+// Viewport aspect ratio used to de-stretch y when computing fan angles
 const APPROX_ASPECT = 16 / 9;
 
-// All labels on the right — case swings left after opening
-const A_POSITIONS: [number, number][] = [
-  [78, 12],  // 0  Looking Glass
-  [81, 23],  // 1  See Tracks Think Train
-  [83, 34],  // 2  Song For The Trees
-  [83, 45],  // 3  Phone Call / Voicemail
-  [82, 56],  // 4  Graduation Song
-  [80, 67],  // 5  Losing Meaning
-  [77, 78],  // 6  Nonexistent Interlude
-];
+// Groove radii as fraction of REC_RADIUS — outer track first.
+// Pushed close to 1.0 so lines appear to touch the record's visual edge.
+const A_RADII = [0.97, 0.90, 0.81, 0.72, 0.63, 0.52, 0.43];
+const B_RADII = [0.96, 0.83, 0.68, 0.53];
 
-const B_POSITIONS: [number, number][] = [
-  [79, 22],  // 0  Homeswitcher
-  [82, 38],  // 1  Graduation Song (Disuko)
-  [81, 54],  // 2  Glowing Screens
-  [79, 70],  // 3  Moving Out
-];
-
-// Groove radii as fraction of REC_RADIUS — outer track first, innermost last
-const A_RADII = [0.92, 0.80, 0.69, 0.58, 0.48, 0.39, 0.36];
-const B_RADII = [0.88, 0.72, 0.57, 0.43];
-
-// Fan from the groove edge at the angle pointing toward each label.
-// De-stretch y by APPROX_ASPECT so the angle is computed in pixel space.
+/**
+ * Compute where a line should leave the groove edge.
+ * All coords are in viewport-%; APPROX_ASPECT de-stretches y so the angle is
+ * computed in pixel space rather than %-space.
+ */
 function lineStart(idx: number, side: Side, labelX: number, labelY: number): [number, number] {
   const radii = side === "A" ? A_RADII : B_RADII;
   const r     = (radii[idx] ?? 0.5) * REC_RADIUS;
@@ -57,14 +56,22 @@ export default function AlbumScene() {
   const canvasRef    = useRef<HTMLCanvasElement>(null);
   const audioRef     = useRef<HTMLAudioElement>(null);
 
-  const [phase,       setPhase]       = useState<Phase>("idle");
-  const [activeTrack, setActiveTrack] = useState<number | null>(null);
-  const [side,        setSide]        = useState<Side>("A");
+  const [phase,        setPhase]        = useState<Phase>("idle");
+  const [activeTrack,  setActiveTrack]  = useState<number | null>(null);
+  const [side,         setSide]         = useState<Side>("A");
+  const [hoveredTrack, setHoveredTrack] = useState<number | null>(null);
 
   const phaseRef       = useRef<Phase>("idle");
   const activeTrackRef = useRef<number | null>(null);
   const sideRef        = useRef<Side>("A");
   const flipRef        = useRef({ current: 0, target: 0 });
+  // Scratch state — angular-velocity model so rate 0=paused, 1=normal, tracks cursor
+  const scratchRef = useRef({
+    active:        false,
+    lastX:         0,
+    lastTimestamp: 0,
+    angularVel:    NORMAL_SPIN, // rad/s; start at normal spin so first play is instant
+  });
 
   const commitPhase = useCallback((p: Phase) => {
     phaseRef.current = p;
@@ -214,9 +221,60 @@ export default function AlbumScene() {
         return out;
       };
 
-      const onPointerDown = (e: PointerEvent) => { ptrDownX = e.clientX; ptrDownY = e.clientY; };
+      const onPointerDown = (e: PointerEvent) => {
+        ptrDownX = e.clientX;
+        ptrDownY = e.clientY;
+
+        if (phaseRef.current === "playing") {
+          // Grabbing the record halts it — user now directly controls its position
+          scratchRef.current.active        = true;
+          scratchRef.current.lastX         = e.clientX;
+          scratchRef.current.lastTimestamp = performance.now();
+          scratchRef.current.angularVel    = 0;
+          canvas.setPointerCapture(e.pointerId);
+          canvas.style.cursor = "grabbing";
+        }
+      };
+
+      const onPointerMove = (e: PointerEvent) => {
+        if (!scratchRef.current.active || !recordPivot) return;
+
+        const now          = performance.now();
+        const dt           = (now - scratchRef.current.lastTimestamp) / 1000; // seconds
+        const dx           = e.clientX - scratchRef.current.lastX;
+        const angularDelta = dx * DRAG_TO_RAD;
+
+        if (dt > 0 && dt < 0.1) {
+          // Angular velocity in rad/s, EMA-smoothed to suppress high-frequency jitter
+          const rawVel = angularDelta / dt;
+          scratchRef.current.angularVel =
+            scratchRef.current.angularVel * 0.55 + rawVel * 0.45;
+        }
+
+        scratchRef.current.lastX         = e.clientX;
+        scratchRef.current.lastTimestamp = now;
+
+        // Visual: record follows cursor directly
+        recordPivot.rotation.y += angularDelta;
+
+        // Audio: angular velocity 0 → rate≈0 (paused), NORMAL_SPIN → rate 1.0
+        const audio = audioRef.current;
+        if (audio) {
+          const rate = scratchRef.current.angularVel / NORMAL_SPIN;
+          audio.playbackRate = Math.max(0.05, Math.min(3.0, rate));
+        }
+      };
 
       const onPointerUp = (e: PointerEvent) => {
+        // End scratch mode — release pointer capture and restore grab cursor
+        if (scratchRef.current.active) {
+          scratchRef.current.active = false;
+          canvas.releasePointerCapture(e.pointerId);
+          canvas.style.cursor = "grab";
+          // playbackRate decays back to 1× in the tick loop
+        }
+
+        // Open-case click — only when idle and not a drag
         if (phaseRef.current !== "idle") return;
         const dx = e.clientX - ptrDownX;
         const dy = e.clientY - ptrDownY;
@@ -240,9 +298,10 @@ export default function AlbumScene() {
       };
 
       canvas.addEventListener("pointerdown", onPointerDown);
+      canvas.addEventListener("pointermove", onPointerMove);
       canvas.addEventListener("pointerup",   onPointerUp);
 
-      // ── Resize ────────────────────────────────────────────────────────────
+      // ── Resize (called once here; also wired to ResizeObserver below) ──────
       resize();
       const ro = new ResizeObserver(resize);
       ro.observe(container);
@@ -258,7 +317,32 @@ export default function AlbumScene() {
         mixers.forEach((m) => m.update(delta));
 
         if (phaseRef.current === "playing" && recordPivot) {
-          recordPivot.rotation.y += delta * Math.PI * 0.8;
+          if (scratchRef.current.active) {
+            // Record position is driven entirely by onPointerMove — nothing to do here
+          } else {
+            // Inertia: smoothly spin angularVel back toward NORMAL_SPIN after scratch
+            const diff = NORMAL_SPIN - scratchRef.current.angularVel;
+            if (Math.abs(diff) > 0.001) {
+              // Acceleration proportional to deficit — feels like motor engaging
+              scratchRef.current.angularVel += diff * Math.min(delta * 4.5, 0.28);
+            } else {
+              scratchRef.current.angularVel = NORMAL_SPIN;
+            }
+
+            // Visual rotation driven by current angular velocity
+            recordPivot.rotation.y += scratchRef.current.angularVel * delta;
+
+            // Audio rate tracks the same angular velocity
+            const tickAudio = audioRef.current;
+            if (tickAudio) {
+              const rate = scratchRef.current.angularVel / NORMAL_SPIN;
+              if (Math.abs(rate - 1) < 0.01) {
+                tickAudio.playbackRate = 1; // snap to exact 1× once settled
+              } else {
+                tickAudio.playbackRate = Math.max(0.1, Math.min(2.0, rate));
+              }
+            }
+          }
         }
 
         if (recordPivot) {
@@ -277,6 +361,7 @@ export default function AlbumScene() {
       cleanup = () => {
         ro.disconnect();
         canvas.removeEventListener("pointerdown", onPointerDown);
+        canvas.removeEventListener("pointermove", onPointerMove);
         canvas.removeEventListener("pointerup",   onPointerUp);
         renderer.dispose();
       };
@@ -322,6 +407,23 @@ export default function AlbumScene() {
     [commitPhase]
   );
 
+  // ── Auto-advance to next track when the current one ends ──────────────────
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handleEnded = () => {
+      const idx = activeTrackRef.current;
+      if (idx === null) return;
+      const list = sideRef.current === "A" ? ALBUM.tracks : ALBUM.bonusTracks;
+      const nextIdx = (idx + 1) % list.length;
+      handleSongClick(nextIdx);
+    };
+
+    audio.addEventListener("ended", handleEnded);
+    return () => audio.removeEventListener("ended", handleEnded);
+  }, [handleSongClick]);
+
   // ── Flip ───────────────────────────────────────────────────────────────────
   const handleFlip = useCallback(() => {
     const next: Side = sideRef.current === "A" ? "B" : "A";
@@ -333,9 +435,10 @@ export default function AlbumScene() {
     if (phaseRef.current === "playing") commitPhase("revealed");
   }, [commitPhase, commitSide]);
 
-  const isOpen    = phase === "revealed" || phase === "playing";
-  const tracks    = side === "A" ? ALBUM.tracks : ALBUM.bonusTracks;
-  const positions = side === "A" ? A_POSITIONS : B_POSITIONS;
+  const isOpen  = phase === "revealed" || phase === "playing";
+  const tracks  = side === "A" ? ALBUM.tracks : ALBUM.bonusTracks;
+  const yCoords = side === "A" ? A_Y : B_Y;
+  const rail    = side === "A" ? RAIL_A : RAIL_B;
 
   return (
     <div
@@ -349,7 +452,7 @@ export default function AlbumScene() {
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
-        style={{ cursor: phase === "idle" ? "pointer" : "default" }}
+        style={{ cursor: phase === "idle" ? "pointer" : phase === "playing" ? "grab" : "default" }}
       />
 
       {/* ── Hints ────────────────────────────────────────────────────── */}
@@ -370,9 +473,12 @@ export default function AlbumScene() {
         </p>
       )}
 
-      {/* ── SVG lines ────────────────────────────────────────────────── */}
+      {/* ── SVG lines — desktop only ──────────────────────────────────── */}
       {isOpen && (
-        <svg className="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          className="absolute inset-0 w-full h-full pointer-events-none hidden md:block"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <defs>
             <filter id="line-glow" x="-80%" y="-80%" width="260%" height="260%">
               <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
@@ -383,24 +489,28 @@ export default function AlbumScene() {
             </filter>
           </defs>
           {tracks.map((_, i) => {
-            const [lx, ly] = positions[i];
-            const [sx, sy] = lineStart(i, side, lx, ly);
-            const isActive = activeTrack === i;
-            const ex = lx - 5;
-            const ey = ly;
+            const ly       = yCoords[i];
+            const [sx, sy] = lineStart(i, side, rail, ly);
+            const isActive  = activeTrack === i;
+            const isHovered = hoveredTrack === i && !isActive;
             return (
               <line
                 key={`${side}-${i}`}
-                x1={`${sx}%`} y1={`${sy}%`}
-                x2={`${ex}%`} y2={`${ey}%`}
-                stroke={isActive ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.5)"}
-                strokeWidth={isActive ? 3 : 1.5}
+                x1={`${sx}%`}         y1={`${sy}%`}
+                x2={`${rail - 1.2}%`} y2={`${ly}%`}
+                stroke={
+                  isActive  ? "rgba(255,255,255,0.95)" :
+                  isHovered ? "rgba(255,255,255,0.85)" :
+                              "rgba(255,255,255,0.45)"
+                }
+                strokeWidth={isActive ? 3 : isHovered ? 2 : 1.5}
                 strokeLinecap="round"
-                filter={isActive ? "url(#line-glow)" : undefined}
+                filter={isActive || isHovered ? "url(#line-glow)" : undefined}
                 pathLength="1"
                 style={{
                   strokeDasharray:  1,
                   strokeDashoffset: 0,
+                  transition:       "stroke 0.15s, stroke-width 0.15s",
                   animation: `draw-line 0.55s cubic-bezier(.4,0,.2,1) ${i * 0.07}s both`,
                 }}
               />
@@ -409,96 +519,141 @@ export default function AlbumScene() {
         </svg>
       )}
 
-      {/* ── Song labels ──────────────────────────────────────────────── */}
-      {isOpen &&
-        tracks.map((t, i) => {
-          const [lx, ly] = positions[i];
-          const isActive = activeTrack === i;
-
-          return (
-            /* Zero-height anchor at (lx%, ly%) — content stacks upward from here */
-            <div
-              key={`${side}-${t.title}`}
-              style={{
-                position:  "absolute",
-                left:      `${lx}%`,
-                top:       `${ly}%`,
-                height:    0,
-                animation: `fade-up 0.4s ease-out ${i * 0.07 + 0.35}s both`,
-              }}
-            >
-              {/* Stack grows upward: description → artists → title (bottom) */}
+      {/* ── Song labels — desktop only ────────────────────────────────── */}
+      {isOpen && (
+        <div className="hidden md:block">
+          {tracks.map((t, i) => {
+            const ly       = yCoords[i];
+            const isActive = activeTrack === i;
+            return (
               <div
+                key={`${side}-${t.title}`}
                 style={{
-                  position:  "absolute",
-                  bottom:    0,
-                  right:     0,
-                  transform: "translateX(calc(-100% - 40px))",
-                  width:     "200px",
-                  textAlign: "right",
+                  position:    "absolute",
+                  left:        `${rail}%`,
+                  top:         `${ly}%`,
+                  transform:   "translateY(-50%)",
+                  paddingLeft: "10px",
+                  animation:   `fade-up 0.4s ease-out ${i * 0.07 + 0.35}s both`,
                 }}
               >
-                {/* Description — fixed-width, independent of title */}
-                {isActive && t.description && (
-                  <div
+                <button
+                  onClick={() => handleSongClick(i)}
+                  onMouseEnter={() => setHoveredTrack(i)}
+                  onMouseLeave={() => setHoveredTrack(null)}
+                  className="focus:outline-none block"
+                  style={{ textAlign: "left" }}
+                >
+                  <span
                     style={{
-                      fontSize:   "11px",
-                      lineHeight: "1.6",
-                      color:      "rgba(0,0,0,0.42)",
-                      animation:  "fade-up 0.3s ease-out both",
-                      marginBottom: "3px",
+                      display:    "block",
+                      fontSize:   "13px",
+                      fontWeight: 600,
+                      lineHeight: "1.25",
+                      color:
+                        isActive          ? "rgba(0,0,0,0.9)"  :
+                        hoveredTrack === i ? "rgba(0,0,0,0.85)" :
+                                            "rgba(0,0,0,0.45)",
+                      transition: "color 0.15s",
+                      whiteSpace: "nowrap",
                     }}
                   >
-                    {t.description}
-                  </div>
-                )}
+                    {t.title}
+                  </span>
+                </button>
 
-                {/* Artists — above title */}
                 {t.artists && t.artists.length > 0 && (
                   <div
                     style={{
-                      fontSize:      "11px",
-                      letterSpacing: "0.04em",
-                      color:         isActive ? "rgba(0,0,0,0.5)" : "rgba(0,0,0,0.3)",
+                      fontSize:      "10px",
+                      letterSpacing: "0.05em",
+                      color:         isActive ? "rgba(0,0,0,0.45)" : "rgba(0,0,0,0.28)",
                       transition:    "color 0.15s",
-                      marginBottom:  "2px",
+                      marginTop:     "1px",
+                      whiteSpace:    "nowrap",
                     }}
                   >
                     {t.artists.join(", ")}
                   </div>
                 )}
 
-                {/* Title — bottommost, always anchored at ly% */}
-                <button
-                  onClick={() => handleSongClick(i)}
-                  className="focus:outline-none"
-                  style={{ display: "block", width: "100%", textAlign: "right" }}
-                >
-                  <span
+                {isActive && t.description && (
+                  <div
                     style={{
-                      display:    "block",
-                      fontSize:   "14px",
-                      fontWeight: 600,
-                      lineHeight: "1.2",
-                      color:      isActive ? "rgba(0,0,0,0.9)" : "rgba(0,0,0,0.55)",
-                      transition: "color 0.15s",
+                      fontSize:   "12px",
+                      lineHeight: "1.6",
+                      color:      "rgba(0,0,0,0.45)",
+                      animation:  "fade-up 0.3s ease-out both",
+                      marginTop:  "5px",
+                      maxWidth:   "200px",
                     }}
                   >
-                    {t.title}
-                  </span>
-                </button>
+                    {t.description}
+                  </div>
+                )}
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+      )}
 
-      {/* ── Flip button — fixed at bottom center ─────────────────────── */}
+      {/* ── Mobile track list — small screens only ────────────────────── */}
+      {isOpen && (
+        <div className="md:hidden absolute bottom-4 left-0 right-0 flex flex-col items-center gap-3">
+          {/* Horizontal scrolling pill strip */}
+          <div
+            className="w-full flex gap-2 overflow-x-auto px-4 pb-1"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {tracks.map((t, i) => {
+              const isActive = activeTrack === i;
+              return (
+                <button
+                  key={`mob-${side}-${i}`}
+                  onClick={() => handleSongClick(i)}
+                  className="flex-none rounded-full px-4 py-2 text-xs font-medium whitespace-nowrap transition-colors"
+                  style={{
+                    background:          isActive ? "rgba(0,0,0,0.78)" : "rgba(255,255,255,0.72)",
+                    color:               isActive ? "rgba(255,255,255,0.92)" : "rgba(0,0,0,0.6)",
+                    border:              isActive ? "none" : "1px solid rgba(0,0,0,0.12)",
+                    backdropFilter:      "blur(8px)",
+                    WebkitBackdropFilter:"blur(8px)",
+                  }}
+                >
+                  {t.title}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Active track description */}
+          {activeTrack !== null && tracks[activeTrack]?.description && (
+            <p
+              className="px-6 text-xs leading-relaxed text-center"
+              style={{ color: "rgba(0,0,0,0.45)", animation: "fade-up 0.3s ease-out both" }}
+            >
+              {tracks[activeTrack].description}
+            </p>
+          )}
+
+          {/* Flip button (mobile) */}
+          <button
+            onClick={handleFlip}
+            className="text-[10px] tracking-widest uppercase transition-colors duration-200"
+            style={{ color: "rgba(0,0,0,0.32)" }}
+          >
+            {side === "A" ? "↓ B-Side" : "↑ A-Side"}
+          </button>
+        </div>
+      )}
+
+      {/* ── Flip button — desktop only ────────────────────────────────── */}
       {isOpen && (
         <button
           onClick={handleFlip}
-          className="absolute left-1/2 text-[10px] tracking-widest uppercase transition-colors duration-200 hover:text-black/60"
+          className="hidden md:block absolute left-1/2 text-[10px] tracking-widest uppercase transition-colors duration-200 hover:text-black/60"
           style={{
-            bottom:    "28px",
+            bottom:    "48px",
             transform: "translateX(-50%)",
             color:     "rgba(0,0,0,0.32)",
             animation: "fade-up 0.4s ease-out 0.6s both",

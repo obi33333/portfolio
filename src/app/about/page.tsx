@@ -39,7 +39,7 @@ export default function AboutPage() {
       <section className="mt-8 max-w-2xl space-y-4 text-base leading-7 text-black/75">
         <p>
           My name is Obadiah Bernstein. I create digital technology projects
-          that put the user in an immersive relationship to their environment.
+          that immerse users in fun and creative technical spaces.
         </p>
         <p>
           I am a graduate of Chatham University. I majored in Immersive Media,
@@ -47,15 +47,14 @@ export default function AboutPage() {
           development processes and programming languages.
         </p>
         <p>
-          I worked for Chatham’s Information Technology Department, and I
-          previously worked in Chatham’s Immersive Media department as a Studio
-          Assistant, where I developed and built robots, created and ran
-          workshops for labs, and conveyed complex information to
-          beginner-level programmers.
+          I worked for Chatham’s Information Technology Department, and in
+          Chatham’s Immersive Media department as a Studio Assistant, where I
+          developed and built robots, created and ran workshops for labs, and
+          conveyed complex information to beginner-level programmers.
         </p>
         <p>
           My experiences as a student and employee in the Immersive Media
-          department are expanding my abilities as an independent designer and
+          department expanded my abilities as an independent designer and
           artist. I love multimedia art, from sewing to 3D modeling.
         </p>
       </section>
