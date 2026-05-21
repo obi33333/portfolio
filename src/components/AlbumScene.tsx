@@ -399,20 +399,15 @@ export default function AlbumScene() {
         const dy = e.clientY - ptrDownY;
         if (Math.sqrt(dx * dx + dy * dy) > 8) return;
 
-        const rect = canvas.getBoundingClientRect();
-        ptrNDC.set(
-          ((e.clientX - rect.left) / rect.width)  *  2 - 1,
-          ((e.clientY - rect.top)  / rect.height) * -2 + 1
-        );
-        raycaster.setFromCamera(ptrNDC, camera);
-
-        if (raycaster.intersectObjects(collectMeshes()).length > 0) {
-          commitPhase("opening");
-          if (openingActions.length === 0) {
-            setTimeout(() => commitPhase("revealed"), 500);
-          } else {
-            openingActions.forEach((a) => a.play());
-          }
+        // Any non-drag click on the canvas opens the album when idle
+        commitPhase("opening");
+        if (openingActions.length === 0) {
+          setTimeout(() => commitPhase("revealed"), 500);
+        } else {
+          openingActions.forEach((a) => {
+            a.timeScale = 2.5;
+            a.play();
+          });
         }
       };
 
@@ -611,8 +606,8 @@ export default function AlbumScene() {
       {/* ── Hints ────────────────────────────────────────────────────── */}
       {phase === "idle" && (
         <p
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-xs tracking-widest uppercase select-none pointer-events-none"
-          style={{ color: "rgba(0,0,0,0.35)", animation: "hint-pulse 2.4s ease-in-out infinite" }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-sm tracking-widest uppercase select-none pointer-events-none"
+          style={{ color: "rgba(0,0,0,0.40)", animation: "hint-pulse 2.4s ease-in-out infinite" }}
         >
           click to open
         </p>
@@ -700,7 +695,7 @@ export default function AlbumScene() {
                   <span
                     style={{
                       display:    "block",
-                      fontSize:   "13px",
+                      fontSize:   "15px",
                       fontWeight: 600,
                       lineHeight: "1.25",
                       color:
@@ -718,11 +713,11 @@ export default function AlbumScene() {
                 {t.artists && t.artists.length > 0 && (
                   <div
                     style={{
-                      fontSize:      "10px",
+                      fontSize:      "12px",
                       letterSpacing: "0.05em",
                       color:         isActive ? "rgba(0,0,0,0.45)" : "rgba(0,0,0,0.28)",
                       transition:    "color 0.15s",
-                      marginTop:     "1px",
+                      marginTop:     "2px",
                       whiteSpace:    "nowrap",
                     }}
                   >
@@ -733,12 +728,12 @@ export default function AlbumScene() {
                 {isActive && t.description && (
                   <div
                     style={{
-                      fontSize:   "12px",
+                      fontSize:   "13px",
                       lineHeight: "1.6",
                       color:      "rgba(0,0,0,0.45)",
                       animation:  "fade-up 0.3s ease-out both",
                       marginTop:  "5px",
-                      maxWidth:   "200px",
+                      maxWidth:   "220px",
                     }}
                   >
                     {t.description}
@@ -804,7 +799,7 @@ export default function AlbumScene() {
       {isOpen && (
         <button
           onClick={handleFlip}
-          className="hidden md:block absolute left-1/2 text-[10px] tracking-widest uppercase transition-colors duration-200 hover:text-black/60"
+          className="hidden md:block absolute left-1/2 text-xs tracking-widest uppercase transition-colors duration-200 hover:text-black/60"
           style={{
             bottom:    "48px",
             transform: "translateX(-50%)",

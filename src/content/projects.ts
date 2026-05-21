@@ -1,5 +1,5 @@
 export type ProjectMedia = {
-  type: "image" | "video";
+  type: "image" | "video" | "gif";
   src: string;
   alt?: string;
   caption?: string;
@@ -61,7 +61,7 @@ const PROJECTS: Project[] = [
     title: "Desktop Pet",
     summary:
       "A custom Shimeji desktop companion based on Oba, a personal doodle character. Adapted from a vintage early-2000s Japanese desktop pet application.",
-    tags: ["Creative Coding", "Java"],
+    tags: ["Creative Coding"],
     preview: { type: "image", src: "/projects/desktop-pet/DesktopPetCoverImage.png", alt: "Desktop Pet character screenshot" },
     media: [{ type: "video", src: "/projects/desktop-pet/demo.mp4" }],
     body: [
@@ -76,7 +76,7 @@ const PROJECTS: Project[] = [
     title: "Custom Lively Wallpapers",
     summary:
       "An interactive desktop wallpaper with integrated Spotify controls and a diegetic clock, built by extending an open-source Lively Wallpaper using Three.js.",
-    tags: ["Three.js", "Web", "Creative Coding"],
+    tags: ["Web", "Creative Coding"],
     preview: { type: "image", src: "/projects/custom-lively-wallpapers/cover.png", alt: "Living room wallpaper preview" },
     media: [{ type: "video", src: "/projects/custom-lively-wallpapers/demo.mp4" }],
     body: [
@@ -128,7 +128,7 @@ const PROJECTS: Project[] = [
     title: "Pinball Game",
     summary:
       "A body-controlled pinball game built in Unity, where force sensing resistors connected to a microcontroller let players use physical pressure to operate the flippers.",
-    tags: ["Unity", "Arduino", "Physical Computing", "Game Dev"],
+    tags: ["Unity", "Electronics", "Physical Computing", "Game Dev"],
     preview: { type: "image", src: "/projects/pinball-game/cover.jpg", alt: "Pinball game setup photo" },
     media: [{ type: "video", src: "/projects/pinball-game/demo.mp4" }],
     body: [
@@ -144,7 +144,7 @@ const PROJECTS: Project[] = [
     title: "Poems",
     summary:
       "A series of Blender renders paired with original poetry and music composed in FL Studio. Visual compositing done in Premiere Pro.",
-    tags: ["Blender", "FL Studio", "Premiere Pro", "Animation"],
+    tags: ["Blender", "Animation"],
     preview: { type: "image", src: "/projects/poems/cover.jpg", alt: "Poems visual still" },
     media: [
       { type: "video", src: "/projects/poems/demo.mp4", caption: "Poem 1" },
@@ -226,7 +226,7 @@ const PROJECTS: Project[] = [
     title: "Tell Me What's Real",
     summary:
       "A music video made for Angelo (Disuko Music) using After Effects, Premiere Pro, TouchDesigner, and Blender. A full-pipeline collaborative creative project.",
-    tags: ["Blender", "TouchDesigner", "After Effects", "Premiere Pro", "Music Video"],
+    tags: ["Blender", "TouchDesigner", "Music Video"],
     preview: { type: "image", src: "/projects/tell-me-whats-real/cover.jpg", alt: "Tell Me What's Real music video still" },
     media: [{ type: "video", src: "/projects/tell-me-whats-real/demo.mp4" }],
     body: [
@@ -258,7 +258,7 @@ const PROJECTS: Project[] = [
     title: "Trust Fall",
     summary:
       "A live-cut music video built in TouchDesigner, Unity, and Premiere Pro. Scenes were switched live during performance to create the final edit.",
-    tags: ["TouchDesigner", "Unity", "Premiere Pro", "Music Video", "Live Performance"],
+    tags: ["TouchDesigner", "Unity", "Music Video", "Live Performance"],
 
     preview: { type: "image", src: "/projects/trust-fall/cover.jpg", alt: "Trust Fall music video still" },
     media: [{ type: "video", src: "/projects/trust-fall/demo.mp4" }],
@@ -277,7 +277,7 @@ const PROJECTS: Project[] = [
     title: "Oscilloscope",
     summary:
       "A custom VST programmed in FL Studio that converts stereo audio into XY data and plays it back on an oscilloscope as real-time vector graphics. Includes SVGs rendered as oscilloscope visuals.",
-    tags: ["FL Studio", "Audio Visualization", "Creative Coding"],
+    tags: ["Music Production", "Audio Visualization", "Creative Coding"],
     preview: { type: "video", src: "/projects/oscilloscope/preview.mp4" },
     media: [
       { type: "video", src: "/projects/oscilloscope/preview.mp4" },
@@ -298,7 +298,7 @@ const PROJECTS: Project[] = [
     title: "Aces Wired",
     summary:
       "A short film set in a neon-lit dystopian future where four gambling addicts must expose a rigged poker system. A senior-year collaborative project using Premiere Pro, After Effects, and Blender.",
-    tags: ["Blender", "After Effects", "Premiere Pro", "VFX", "Short Film"],
+    tags: ["Blender", "VFX", "Short Film"],
     timeframe: "Senior year, Chatham University",
     preview: { type: "image", src: "/projects/aces-wired/cover.jpg", alt: "Aces Wired film still" },
     media: [{ type: "video", src: "/projects/aces-wired/demo.mp4" }],
@@ -315,7 +315,7 @@ const PROJECTS: Project[] = [
     title: "Are You Engaged?",
     summary:
       "A multi-screen audiovisual installation across three stacked CRT televisions offering satirical, surrealist, and serious commentary on media consumption, political news, and online echo chambers.",
-    tags: ["TouchDesigner", "After Effects", "Premiere Pro", "Installation", "Experimental"],
+    tags: ["TouchDesigner", "Installation", "Experimental"],
     preview: { type: "image", src: "/projects/are-you-engaged/cover.jpg", alt: "Are You Engaged installation still" },
     media: [{ type: "image", src: "/projects/are-you-engaged/cover.jpg", alt: "Are You Engaged installation still" }],
     links: { youtube: "https://www.youtube.com/watch?v=XI30lZMrOoA" },
@@ -347,7 +347,7 @@ const PROJECTS: Project[] = [
     title: "SciFi VFX",
     summary:
       "A Blender VFX composite using Mixamo character animations and an Ian Hubert-inspired handheld camera workflow. Made in third year as a personal skills push.",
-    tags: ["Blender", "VFX", "Compositing"],
+    tags: ["Blender", "VFX"],
     preview: { type: "video", src: "/projects/vfx-kill-robot/demo.mp4" },
     media: [{ type: "video", src: "/projects/vfx-kill-robot/maniacSMALL.mp4" }],
     body: [
@@ -362,7 +362,7 @@ const PROJECTS: Project[] = [
     title: "VFX Spaceship",
     summary:
       "A sci-fi VFX sequence built in Blender using techniques from Ian Hubert's production workflow. A personal exploration of fantastical environments and practical-looking composites.",
-    tags: ["Blender", "VFX", "Compositing"],
+    tags: ["Blender", "VFX"],
     preview: { type: "video", src: "/projects/vfx-spaceship/demo.mp4" },
     media: [{ type: "video", src: "/projects/vfx-spaceship/demo.mp4" }],
     body: [
@@ -379,7 +379,7 @@ const PROJECTS: Project[] = [
     title: "Haptic Alarm System (Capstone)",
     summary:
       "Senior immersive media thesis project: a haptic-based alarm system designed to replace audio alerts in critical medical environments such as the NICU.",
-    tags: ["Arduino", "Physical Computing", "Haptics", "Prototyping"],
+    tags: ["Electronics", "Physical Computing", "Haptics", "Prototyping"],
     timeframe: "Senior year thesis, Chatham University",
     preview: { type: "image", src: "/projects/capstone/cover.jpg", alt: "Haptic fob device photo" },
     media: [
@@ -403,7 +403,7 @@ const PROJECTS: Project[] = [
     title: "Clocky — Alarm Clock R&D",
     summary:
       "Mechanical engineering internship with Clocky, focused on developing a next-generation consumer alarm clock from concept through iterative hardware prototyping.",
-    tags: ["Hardware", "Product Design", "Prototyping"],
+    tags: ["Electronics", "Product Design", "Prototyping"],
     preview: { type: "image", src: "/projects/clocky-internship/coverimage.png", alt: "Clocky prototype photo" },
     media: [{ type: "video", src: "/projects/clocky-internship/demo.mp4" }],
     body: [
@@ -419,7 +419,7 @@ const PROJECTS: Project[] = [
     title: "Jimmy",
     summary:
       "A machine learning robot built around the concept of homeostasis. Uses a solar panel and photocell to seek light and self-sustain. Later repurposed as a cat toy.",
-    tags: ["Arduino", "Robotics", "Machine Learning"],
+    tags: ["Electronics", "Robotics", "Machine Learning"],
     preview: { type: "video", src: "/projects/jimmy/demo.mp4" },
     media: [{ type: "video", src: "/projects/jimmy/demo.mp4" }],
     body: [
@@ -434,7 +434,7 @@ const PROJECTS: Project[] = [
     title: "Knights of Isiah",
     summary:
       "A custom Raspberry Pi multitool built for a friend, featuring RFID scanning, a virtual pet, infrared signal cloning, and a microphone-based frequency reader.",
-    tags: ["Raspberry Pi", "Hardware", "Physical Computing"],
+    tags: ["Electronics", "Physical Computing"],
     preview: { type: "image", src: "/projects/knights-of-isiah/cover.png", alt: "Knights of Isiah device photo" },
     media: [
       { type: "video", src: "/projects/knights-of-isiah/doc1.mp4" },
@@ -454,7 +454,7 @@ const PROJECTS: Project[] = [
     title: "Plunter",
     summary:
       "A robot that translates houseplant moisture data into natural speech using an AI voice model trained on a professor's voice. Built with Raspberry Pi and Arduino Uno.",
-    tags: ["Raspberry Pi", "Arduino", "Physical Computing", "Machine Learning"],
+    tags: ["Electronics", "Physical Computing", "Machine Learning"],
     preview: { type: "image", src: "/projects/plunter/cover.png", alt: "Plunter robot photo" },
     media: [
       { type: "video", src: "/projects/plunter/demo.mp4" },
@@ -472,7 +472,7 @@ const PROJECTS: Project[] = [
     title: "Trash Bot",
     summary:
       "A four-hour rapid prototype built from cardboard, ultrasonic sensors, motors, and an Arduino Uno. The solar panel actually works.",
-    tags: ["Arduino", "Robotics", "Physical Computing", "Prototyping"],
+    tags: ["Electronics", "Robotics", "Physical Computing", "Prototyping"],
     preview: { type: "video", src: "/projects/trash-bot/demo.mp4" },
     media: [{ type: "video", src: "/projects/trash-bot/demo.mp4" }],
     body: [
@@ -489,7 +489,7 @@ const PROJECTS: Project[] = [
     title: "Teaching Assistant — Clayze Program",
     summary:
       "Full-time Teaching Assistant for a joint CMU / Chatham University immersive media program (2022–2024), coaching students in 3D modeling, Arduino, RealSense, LookingGlass, and Meta Quest development.",
-    tags: ["Teaching", "Arduino", "3D"],
+    tags: ["Teaching", "Electronics", "3D"],
     timeframe: "2022–2024",
     preview: { type: "image", src: "/projects/clayze-ta/thumb.jpg", alt: "Clayze program in session" },
     media: [{ type: "video", src: "/projects/clayze-ta/demo.mp4" }],

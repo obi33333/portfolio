@@ -10,7 +10,7 @@ type Props = {
   cameraControls?: boolean;
   autoRotate?: boolean;
   disableZoom?: boolean;
-  loading?: "auto" | "lazy";
+  loading?: "auto" | "lazy" | "eager";
   reveal?: "auto" | "interaction" | "manual";
   rotationPerSecond?: string;
   bounds?: "legacy" | "tight";
