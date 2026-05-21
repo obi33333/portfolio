@@ -48,7 +48,7 @@ const PROJECTS: Project[] = [
       "A community-based plant growth simulation displayed on three salvaged CRT televisions. Passersby press a physical button to collaboratively grow a shared digital plant.",
     tags: ["Unity", "Game Dev", "Physical Computing", "Installation"],
     preview: { type: "image", src: "/projects/crt-game/cover.jpg", alt: "CRT Game on television screens" },
-    media: [{ type: "video", src: "/projects/crt-game/demo.mp4" }],
+    media: [{ type: "gif", src: "/projects/crt-game/demo.mp4" }],
     body: [
       "Built during a student worker position with the Immersive Media department, CRT Game was designed to run continuously on three CRT televisions in the Art and Design building — TVs that remained there thanks to a bit of persuasion with a professor.",
       "The simulation is community-driven: anyone passing by can hit a physical button to interact, with each press having a probabilistic chance of growing the shared plant. The experience accumulates over time, shaped entirely by foot traffic and curiosity.",
@@ -76,7 +76,7 @@ const PROJECTS: Project[] = [
     title: "Custom Lively Wallpapers",
     summary:
       "An interactive desktop wallpaper with integrated Spotify controls and a diegetic clock, built by extending an open-source Lively Wallpaper using Three.js.",
-    tags: ["Web", "Creative Coding"],
+    tags: ["Creative Coding"],
     preview: { type: "image", src: "/projects/custom-lively-wallpapers/cover.png", alt: "Living room wallpaper preview" },
     media: [{ type: "video", src: "/projects/custom-lively-wallpapers/demo.mp4" }],
     body: [
@@ -173,27 +173,27 @@ const PROJECTS: Project[] = [
         caption: "Bar renders — made freshman year, just exploring the software and learning what Blender could do.",
       },
       {
-        type: "video",
+        type: "gif",
         src: "/projects/renders/bar-close.mp4",
         caption: "BarClose — a close-up render from the same bar scene, freshman year.",
       },
       {
-        type: "video",
+        type: "gif",
         src: "/projects/renders/cartoon-ocean.mp4",
         caption: "CartoonOcean — freshman year, learning modeling techniques and experimenting with stylized shading.",
       },
       {
-        type: "video",
+        type: "gif",
         src: "/projects/renders/oba-rebel.mp4",
         caption: "ObaRebel — made in free time, trying to push the limits of my style and see what works.",
       },
       {
-        type: "video",
+        type: "gif",
         src: "/projects/renders/oba-material.mp4",
         caption: "ObaMaterial — free time exploration, seeing what works and what is too strange.",
       },
       {
-        type: "video",
+        type: "gif",
         src: "/projects/renders/snoopy.mp4",
         caption: "Snoopy — made to be displayed on a LookingGlass holographic display as a 3D diorama you can look around.",
       },
@@ -277,7 +277,7 @@ const PROJECTS: Project[] = [
     title: "Oscilloscope",
     summary:
       "A custom VST programmed in FL Studio that converts stereo audio into XY data and plays it back on an oscilloscope as real-time vector graphics. Includes SVGs rendered as oscilloscope visuals.",
-    tags: ["Music Production", "Audio Visualization", "Creative Coding"],
+    tags: ["Audio Visualization", "Creative Coding"],
     preview: { type: "video", src: "/projects/oscilloscope/preview.mp4" },
     media: [
       { type: "video", src: "/projects/oscilloscope/preview.mp4" },
@@ -298,7 +298,7 @@ const PROJECTS: Project[] = [
     title: "Aces Wired",
     summary:
       "A short film set in a neon-lit dystopian future where four gambling addicts must expose a rigged poker system. A senior-year collaborative project using Premiere Pro, After Effects, and Blender.",
-    tags: ["Blender", "VFX", "Short Film"],
+    tags: ["Blender", "VFX"],
     timeframe: "Senior year, Chatham University",
     preview: { type: "image", src: "/projects/aces-wired/cover.jpg", alt: "Aces Wired film still" },
     media: [{ type: "video", src: "/projects/aces-wired/demo.mp4" }],
@@ -315,7 +315,7 @@ const PROJECTS: Project[] = [
     title: "Are You Engaged?",
     summary:
       "A multi-screen audiovisual installation across three stacked CRT televisions offering satirical, surrealist, and serious commentary on media consumption, political news, and online echo chambers.",
-    tags: ["TouchDesigner", "Installation", "Experimental"],
+    tags: ["TouchDesigner", "Installation"],
     preview: { type: "image", src: "/projects/are-you-engaged/cover.jpg", alt: "Are You Engaged installation still" },
     media: [{ type: "image", src: "/projects/are-you-engaged/cover.jpg", alt: "Are You Engaged installation still" }],
     links: { youtube: "https://www.youtube.com/watch?v=XI30lZMrOoA" },
@@ -332,7 +332,7 @@ const PROJECTS: Project[] = [
     title: "Handmade Animations",
     summary:
       "Frame-by-frame hand animation made for a handmade animation course. The first traditional animation work produced entirely by hand.",
-    tags: ["Animation", "Traditional Media"],
+    tags: ["Animation"],
     preview: { type: "image", src: "/projects/handmade-animations/cover.jpg", alt: "Handmade animation still" },
     media: [{ type: "video", src: "/projects/handmade-animations/demo.mp4" }],
     body: [
@@ -379,7 +379,7 @@ const PROJECTS: Project[] = [
     title: "Haptic Alarm System (Capstone)",
     summary:
       "Senior immersive media thesis project: a haptic-based alarm system designed to replace audio alerts in critical medical environments such as the NICU.",
-    tags: ["Electronics", "Physical Computing", "Haptics", "Prototyping"],
+    tags: ["Electronics", "Physical Computing", "Prototyping"],
     timeframe: "Senior year thesis, Chatham University",
     preview: { type: "image", src: "/projects/capstone/cover.jpg", alt: "Haptic fob device photo" },
     media: [
@@ -403,7 +403,7 @@ const PROJECTS: Project[] = [
     title: "Clocky — Alarm Clock R&D",
     summary:
       "Mechanical engineering internship with Clocky, focused on developing a next-generation consumer alarm clock from concept through iterative hardware prototyping.",
-    tags: ["Electronics", "Product Design", "Prototyping"],
+    tags: ["Electronics", "Prototyping"],
     preview: { type: "image", src: "/projects/clocky-internship/coverimage.png", alt: "Clocky prototype photo" },
     media: [{ type: "video", src: "/projects/clocky-internship/demo.mp4" }],
     body: [
@@ -489,7 +489,7 @@ const PROJECTS: Project[] = [
     title: "Teaching Assistant — Clayze Program",
     summary:
       "Full-time Teaching Assistant for a joint CMU / Chatham University immersive media program (2022–2024), coaching students in 3D modeling, Arduino, RealSense, LookingGlass, and Meta Quest development.",
-    tags: ["Teaching", "Electronics", "3D"],
+    tags: ["Electronics", "3D"],
     timeframe: "2022–2024",
     preview: { type: "image", src: "/projects/clayze-ta/thumb.jpg", alt: "Clayze program in session" },
     media: [{ type: "video", src: "/projects/clayze-ta/demo.mp4" }],
@@ -525,7 +525,7 @@ const PROJECTS: Project[] = [
     title: "Projection Mapping — Library Show",
     summary:
       "Produced and operated a large-scale projection show on the front of the university library for the Immersive Media department, curating and preparing student artwork for architectural display.",
-    tags: ["Projection Mapping", "Event Production"],
+    tags: ["Projection Mapping", "Live Performance"],
     preview: { type: "image", src: "/projects/projection-mapping-show/CoverImage.png", alt: "Library projection show" },
     media: [{ type: "video", src: "/projects/projection-mapping-show/20240419_010326000_iOS.mov" }],
     body: [
@@ -540,7 +540,7 @@ const PROJECTS: Project[] = [
     title: "The Olkes Collection",
     summary:
       "Hired to photoscan and retexture a collection of African artifacts using industry-standard techniques, producing high-fidelity 3D models in FBX, GLB, PLY, and STL formats.",
-    tags: ["Photogrammetry", "3D", "Cultural Preservation"],
+    tags: ["3D"],
     preview: { type: "image", src: "/projects/olkes-collection/preview.png", alt: "Three heads mask 3D render" },
     media: [
       { type: "video", src: "/projects/olkes-collection/demo.mp4", caption: "Polycam scan preview — turntable render of the three heads mask" },

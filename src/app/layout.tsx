@@ -29,6 +29,10 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full scroll-smooth antialiased`}
     >
+      <head>
+        {/* Preload album model so it's already in cache when the home page renders */}
+        <link rel="preload" href="/album/model/ALBUM.glb" as="fetch" crossOrigin="anonymous" />
+      </head>
       <body className="min-h-full flex flex-col">
         <SiteHeader />
         {children}

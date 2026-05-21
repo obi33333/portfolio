@@ -173,12 +173,13 @@ export default function AlbumScene() {
 
       const mixers:         THREE.AnimationMixer[]  = [];
       const openingActions: THREE.AnimationAction[] = [];
+      const bagActions      = new Set<THREE.AnimationAction>();
       let   finishedCount = 0;
       let   totalActions  = 0;
       const allObjects: THREE.Object3D[] = [];
       let   recordPivot: THREE.Group | null = null;
 
-      gltfs.forEach((gltf) => {
+      gltfs.forEach((gltf, gltfIdx) => {
         modelGroup.add(gltf.scene);
         allObjects.push(gltf.scene);
 
@@ -189,6 +190,7 @@ export default function AlbumScene() {
             action.loop              = THREE.LoopOnce;
             action.clampWhenFinished = true;
             openingActions.push(action);
+            if (gltfIdx === 2) bagActions.add(action); // index 2 = recordBag.glb
             totalActions++;
           });
           mixer.addEventListener("finished", () => {
@@ -405,7 +407,7 @@ export default function AlbumScene() {
           setTimeout(() => commitPhase("revealed"), 500);
         } else {
           openingActions.forEach((a) => {
-            a.timeScale = 2.5;
+            a.timeScale = bagActions.has(a) ? 2.5 : 1;
             a.play();
           });
         }
@@ -787,8 +789,7 @@ export default function AlbumScene() {
           {/* Flip button (mobile) */}
           <button
             onClick={handleFlip}
-            className="text-[10px] tracking-widest uppercase transition-colors duration-200"
-            style={{ color: "rgba(0,0,0,0.32)" }}
+            className="text-[10px] tracking-widest uppercase transition-colors duration-200 text-black/30 hover:text-black/70"
           >
             {side === "A" ? "↓ B-Side" : "↑ A-Side"}
           </button>
@@ -799,11 +800,10 @@ export default function AlbumScene() {
       {isOpen && (
         <button
           onClick={handleFlip}
-          className="hidden md:block absolute left-1/2 text-xs tracking-widest uppercase transition-colors duration-200 hover:text-black/60"
+          className="hidden md:block absolute left-1/2 text-xs tracking-widest uppercase transition-all duration-200 text-black/30 hover:text-black/75 hover:tracking-[0.32em]"
           style={{
             bottom:    "48px",
             transform: "translateX(-50%)",
-            color:     "rgba(0,0,0,0.32)",
             animation: "fade-up 0.4s ease-out 0.6s both",
           }}
         >
