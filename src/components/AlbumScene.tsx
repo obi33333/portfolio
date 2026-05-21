@@ -197,9 +197,11 @@ export default function AlbumScene() {
             }
           });
           if (gltfIdx === 2) {
-            // Bag finishes → immediately chain into case/record animations
+            // Bag finishes → skip the idle frames (which match the bag clip's duration)
+            // and start case/record animations from the point where they actually move
             mixer.addEventListener("finished", () => {
-              caseActions.forEach((a) => { a.timeScale = 1.4; a.play(); });
+              const skip = [...bagActions][0]?.getClip().duration ?? 0;
+              caseActions.forEach((a) => { a.time = skip; a.timeScale = 1.4; a.play(); });
             });
           } else {
             mixer.addEventListener("finished", () => {
