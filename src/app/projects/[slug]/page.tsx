@@ -43,10 +43,10 @@ function MediaItem({
 }) {
   if (item.type === "gif") {
     return (
-      <div className="overflow-hidden rounded-xl border border-black/10 bg-black/5">
+      <div className="overflow-hidden rounded-xl border border-black/10 bg-black w-fit mx-auto">
         <video
           src={item.src}
-          className="w-full"
+          className="mx-auto block max-h-[65vh] w-auto max-w-full"
           autoPlay
           loop
           muted
@@ -58,12 +58,15 @@ function MediaItem({
   }
   if (item.type === "video") {
     return (
-      <div className="overflow-hidden rounded-xl border border-black/10 bg-black/5">
-        {keepAudio ? (
-          <video src={item.src} className="w-full" controls playsInline preload="metadata" />
-        ) : (
-          <video src={item.src} className="w-full" controls playsInline preload="metadata" muted />
-        )}
+      <div className="overflow-hidden rounded-xl border border-black/10 bg-black w-fit mx-auto">
+        <video
+          src={item.src}
+          className="mx-auto block max-h-[65vh] w-auto max-w-full"
+          controls
+          playsInline
+          preload="metadata"
+          muted={!keepAudio}
+        />
       </div>
     );
   }

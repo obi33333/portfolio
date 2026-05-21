@@ -19,13 +19,28 @@ export default function MediaGallery({
 
   return (
     <div className="space-y-3">
-      <div className="overflow-hidden rounded-xl border border-black/10 bg-black/5">
-        {item.type === "video" ? (
-          keepAudio ? (
-            <video key={item.src} src={item.src} className="w-full" controls playsInline preload="metadata" />
-          ) : (
-            <video key={item.src} src={item.src} className="w-full" controls playsInline preload="metadata" muted />
-          )
+      <div className="overflow-hidden rounded-xl border border-black/10 bg-black w-fit mx-auto">
+        {item.type === "gif" ? (
+          <video
+            key={item.src}
+            src={item.src}
+            className="mx-auto block max-h-[65vh] w-auto max-w-full"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+          />
+        ) : item.type === "video" ? (
+          <video
+            key={item.src}
+            src={item.src}
+            className="mx-auto block max-h-[65vh] w-auto max-w-full"
+            controls
+            playsInline
+            preload="metadata"
+            muted={!keepAudio}
+          />
         ) : (
           <Image
             src={item.src}
