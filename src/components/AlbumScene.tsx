@@ -22,6 +22,10 @@ const REC_CX     = 53;
 const REC_CY     = 50;
 const REC_RADIUS = 17;
 
+// Scratch physics constants — must stay in sync with the tick-loop spin rate
+const NORMAL_SPIN = Math.PI * 0.8; // rad/s: the record's autonomous spin speed
+const DRAG_TO_RAD = 0.05;          // px → rad conversion (matches recordPivot update)
+
 // Viewport aspect ratio used to de-stretch y when computing fan angles
 const APPROX_ASPECT = 16 / 9;
 
@@ -61,8 +65,13 @@ export default function AlbumScene() {
   const activeTrackRef = useRef<number | null>(null);
   const sideRef        = useRef<Side>("A");
   const flipRef        = useRef({ current: 0, target: 0 });
-  // Scratch state — tracks whether the user is dragging the spinning record
-  const scratchRef     = useRef({ active: false, lastX: 0, velocity: 0 });
+  // Scratch state — angular-velocity model so rate 0=paused, 1=normal, tracks cursor
+  const scratchRef = useRef({
+    active:        false,
+    lastX:         0,
+    lastTimestamp: 0,
+    angularVel:    NORMAL_SPIN, // rad/s; start at normal spin so first play is instant
+  });
 
   const commitPhase = useCallback((p: Phase) => {
     phaseRef.current = p;
@@ -216,31 +225,43 @@ export default function AlbumScene() {
         ptrDownX = e.clientX;
         ptrDownY = e.clientY;
 
-        // Any click while playing activates scratch — capture pointer so
-        // moves outside the canvas boundary still fire on this element
         if (phaseRef.current === "playing") {
-          scratchRef.current = { active: true, lastX: e.clientX, velocity: 0 };
+          // Grabbing the record halts it — user now directly controls its position
+          scratchRef.current.active        = true;
+          scratchRef.current.lastX         = e.clientX;
+          scratchRef.current.lastTimestamp = performance.now();
+          scratchRef.current.angularVel    = 0;
           canvas.setPointerCapture(e.pointerId);
           canvas.style.cursor = "grabbing";
         }
       };
 
       const onPointerMove = (e: PointerEvent) => {
-        if (!scratchRef.current.active) return;
-        const dx = e.clientX - scratchRef.current.lastX;
-        scratchRef.current.lastX    = e.clientX;
-        scratchRef.current.velocity = dx;
+        if (!scratchRef.current.active || !recordPivot) return;
 
-        // Rotate record in the drag direction
-        if (recordPivot) {
-          recordPivot.rotation.y += dx * 0.05;
+        const now          = performance.now();
+        const dt           = (now - scratchRef.current.lastTimestamp) / 1000; // seconds
+        const dx           = e.clientX - scratchRef.current.lastX;
+        const angularDelta = dx * DRAG_TO_RAD;
+
+        if (dt > 0 && dt < 0.1) {
+          // Angular velocity in rad/s, EMA-smoothed to suppress high-frequency jitter
+          const rawVel = angularDelta / dt;
+          scratchRef.current.angularVel =
+            scratchRef.current.angularVel * 0.55 + rawVel * 0.45;
         }
 
-        // Map drag velocity to playback rate.
-        // ±25 px/event ≈ ±1× speed change; clamped 0.1–3.0
+        scratchRef.current.lastX         = e.clientX;
+        scratchRef.current.lastTimestamp = now;
+
+        // Visual: record follows cursor directly
+        recordPivot.rotation.y += angularDelta;
+
+        // Audio: angular velocity 0 → rate≈0 (paused), NORMAL_SPIN → rate 1.0
         const audio = audioRef.current;
         if (audio) {
-          audio.playbackRate = Math.max(0.1, Math.min(3.0, 1 + dx / 25));
+          const rate = scratchRef.current.angularVel / NORMAL_SPIN;
+          audio.playbackRate = Math.max(0.05, Math.min(3.0, rate));
         }
       };
 
@@ -296,16 +317,32 @@ export default function AlbumScene() {
         mixers.forEach((m) => m.update(delta));
 
         if (phaseRef.current === "playing" && recordPivot) {
-          if (!scratchRef.current.active) {
-            recordPivot.rotation.y += delta * Math.PI * 0.8;
-          }
-        }
+          if (scratchRef.current.active) {
+            // Record position is driven entirely by onPointerMove — nothing to do here
+          } else {
+            // Inertia: smoothly spin angularVel back toward NORMAL_SPIN after scratch
+            const diff = NORMAL_SPIN - scratchRef.current.angularVel;
+            if (Math.abs(diff) > 0.001) {
+              // Acceleration proportional to deficit — feels like motor engaging
+              scratchRef.current.angularVel += diff * Math.min(delta * 4.5, 0.28);
+            } else {
+              scratchRef.current.angularVel = NORMAL_SPIN;
+            }
 
-        // Smoothly restore playback rate to 1× after scratch ends
-        const tickAudio = audioRef.current;
-        if (tickAudio && !scratchRef.current.active && Math.abs(tickAudio.playbackRate - 1) > 0.01) {
-          tickAudio.playbackRate += (1 - tickAudio.playbackRate) * Math.min(delta * 6, 0.3);
-          if (Math.abs(tickAudio.playbackRate - 1) < 0.01) tickAudio.playbackRate = 1;
+            // Visual rotation driven by current angular velocity
+            recordPivot.rotation.y += scratchRef.current.angularVel * delta;
+
+            // Audio rate tracks the same angular velocity
+            const tickAudio = audioRef.current;
+            if (tickAudio) {
+              const rate = scratchRef.current.angularVel / NORMAL_SPIN;
+              if (Math.abs(rate - 1) < 0.01) {
+                tickAudio.playbackRate = 1; // snap to exact 1× once settled
+              } else {
+                tickAudio.playbackRate = Math.max(0.1, Math.min(2.0, rate));
+              }
+            }
+          }
         }
 
         if (recordPivot) {
