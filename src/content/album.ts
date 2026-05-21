@@ -37,15 +37,15 @@ export const ALBUM = {
       artists: ["moe", "Harley", "disuko", "honeytea"],
       description:
         "Written as a conversation between an old tree and a young tree. Combines EDM production with analog techniques and instruments.",
-      src: "/album/tracks/Song For The Trees.mp3",
-      format: "mp3",
+      src: "/album/tracks/Song For The Trees.wav",
+      format: "wav",
     },
     {
       title: "Phone Call / Voicemail",
       description:
         "An interlude created using a custom VST I programmed that lets me define harmonic ratios on sine waves.",
-      src: "/album/tracks/Phone call-Voicemail.mp3",
-      format: "mp3",
+      src: "/album/tracks/Phone call-Voicemail.wav",
+      format: "wav",
     },
     {
       title: "Graduation Song",
