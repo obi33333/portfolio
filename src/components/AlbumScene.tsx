@@ -284,7 +284,9 @@ export default function AlbumScene() {
         ptrDownX = e.clientX;
         ptrDownY = e.clientY;
 
-        if (phaseRef.current === "playing") {
+        if (phaseRef.current === "playing" && e.pointerType !== "touch") {
+          // Touch input is excluded — mobile uses the pill list; scratch doesn't
+          // translate well to touch and conflicts with scrolling gestures.
           // Only activate scratch when the pointer is actually over the record —
           // this prevents pointer capture from swallowing clicks on UI buttons.
           const rect = canvas.getBoundingClientRect();
@@ -573,12 +575,12 @@ export default function AlbumScene() {
       if (idx === null) return;
       const list = sideRef.current === "A" ? ALBUM.tracks : ALBUM.bonusTracks;
 
-      if (sideRef.current === "A" && idx === list.length - 1) {
-        // Last track of side A finished — flip the record to side B
+      if (idx === list.length - 1) {
+        // End of a side — flip to the other side and start its first track
         handleFlip();
         setTimeout(() => handleSongClick(0), 400); // wait for flip animation
       } else {
-        handleSongClick((idx + 1) % list.length);
+        handleSongClick(idx + 1);
       }
     };
 
