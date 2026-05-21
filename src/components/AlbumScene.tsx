@@ -174,8 +174,8 @@ export default function AlbumScene() {
       const mixers:         THREE.AnimationMixer[]  = [];
       const openingActions: THREE.AnimationAction[] = [];
       const bagActions      = new Set<THREE.AnimationAction>();
-      const caseActions:    THREE.AnimationAction[] = [];
       let   finishedCount = 0;
+      let   totalActions  = 0;
       const allObjects: THREE.Object3D[] = [];
       let   recordPivot: THREE.Group | null = null;
 
@@ -190,27 +190,15 @@ export default function AlbumScene() {
             action.loop              = THREE.LoopOnce;
             action.clampWhenFinished = true;
             openingActions.push(action);
-            if (gltfIdx === 2) {
-              bagActions.add(action); // index 2 = recordBag.glb
-            } else {
-              caseActions.push(action);
+            if (gltfIdx === 2) bagActions.add(action); // index 2 = recordBag.glb
+            totalActions++;
+          });
+          mixer.addEventListener("finished", () => {
+            finishedCount++;
+            if (finishedCount >= totalActions && phaseRef.current === "opening") {
+              commitPhase("revealed");
             }
           });
-          if (gltfIdx === 2) {
-            // Bag finishes → skip the idle frames (which match the bag clip's duration)
-            // and start case/record animations from the point where they actually move
-            mixer.addEventListener("finished", () => {
-              const skip = [...bagActions][0]?.getClip().duration ?? 0;
-              caseActions.forEach((a) => { a.time = skip; a.timeScale = 1.4; a.play(); });
-            });
-          } else {
-            mixer.addEventListener("finished", () => {
-              finishedCount++;
-              if (finishedCount >= caseActions.length && phaseRef.current === "opening") {
-                commitPhase("revealed");
-              }
-            });
-          }
           mixers.push(mixer);
         }
       });
@@ -417,13 +405,11 @@ export default function AlbumScene() {
         commitPhase("opening");
         if (openingActions.length === 0) {
           setTimeout(() => commitPhase("revealed"), 500);
-        } else if (bagActions.size > 0) {
-          // Play bag first; its mixer's "finished" event chains into case animations
-          openingActions.forEach((a) => {
-            if (bagActions.has(a)) { a.timeScale = 2.5; a.play(); }
-          });
         } else {
-          caseActions.forEach((a) => { a.timeScale = 1.4; a.play(); });
+          openingActions.forEach((a) => {
+            a.timeScale = 1;
+            a.play();
+          });
         }
       };
 
