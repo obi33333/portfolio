@@ -552,6 +552,17 @@ export default function AlbumScene() {
     [commitPhase, loadScratchBuffer]
   );
 
+  // ── Flip ───────────────────────────────────────────────────────────────────
+  const handleFlip = useCallback(() => {
+    const next: Side = sideRef.current === "A" ? "B" : "A";
+    flipRef.current.target = next === "B" ? Math.PI : 0;
+    commitSide(next);
+    audioRef.current?.pause();
+    activeTrackRef.current = null;
+    setActiveTrack(null);
+    if (phaseRef.current === "playing") commitPhase("revealed");
+  }, [commitPhase, commitSide]);
+
   // ── Auto-advance to next track when the current one ends ──────────────────
   useEffect(() => {
     const audio = audioRef.current;
@@ -574,17 +585,6 @@ export default function AlbumScene() {
     audio.addEventListener("ended", handleEnded);
     return () => audio.removeEventListener("ended", handleEnded);
   }, [handleSongClick, handleFlip]);
-
-  // ── Flip ───────────────────────────────────────────────────────────────────
-  const handleFlip = useCallback(() => {
-    const next: Side = sideRef.current === "A" ? "B" : "A";
-    flipRef.current.target = next === "B" ? Math.PI : 0;
-    commitSide(next);
-    audioRef.current?.pause();
-    activeTrackRef.current = null;
-    setActiveTrack(null);
-    if (phaseRef.current === "playing") commitPhase("revealed");
-  }, [commitPhase, commitSide]);
 
   const isOpen  = phase === "revealed" || phase === "playing";
   const tracks  = side === "A" ? ALBUM.tracks : ALBUM.bonusTracks;
