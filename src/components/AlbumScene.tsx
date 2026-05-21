@@ -244,6 +244,15 @@ export default function AlbumScene() {
         return out;
       };
 
+      // Only the record geometry — used to gate scratch so UI buttons still work
+      const collectRecordMeshes = (): THREE.Object3D[] => {
+        const out: THREE.Object3D[] = [];
+        recordPivot?.traverse((child) => {
+          if ((child as THREE.Mesh).isMesh) out.push(child);
+        });
+        return out;
+      };
+
       // ── Web Audio scratch helpers ─────────────────────────────────────────
       const stopScratchSrc = () => {
         const s = scratchSrcRef.current;
@@ -276,7 +285,17 @@ export default function AlbumScene() {
         ptrDownY = e.clientY;
 
         if (phaseRef.current === "playing") {
-          // Capture current playhead and pause HTMLAudio — Web Audio takes over
+          // Only activate scratch when the pointer is actually over the record —
+          // this prevents pointer capture from swallowing clicks on UI buttons.
+          const rect = canvas.getBoundingClientRect();
+          ptrNDC.set(
+            ((e.clientX - rect.left) / rect.width)  *  2 - 1,
+            ((e.clientY - rect.top)  / rect.height) * -2 + 1,
+          );
+          raycaster.setFromCamera(ptrNDC, camera);
+          if (raycaster.intersectObjects(collectRecordMeshes()).length === 0) return;
+
+          // Confirmed hit on the record — take over playback
           scratchPosRef.current            = audioRef.current?.currentTime ?? 0;
           audioRef.current?.pause();
           scratchRef.current.active        = true;
@@ -542,13 +561,19 @@ export default function AlbumScene() {
       const idx = activeTrackRef.current;
       if (idx === null) return;
       const list = sideRef.current === "A" ? ALBUM.tracks : ALBUM.bonusTracks;
-      const nextIdx = (idx + 1) % list.length;
-      handleSongClick(nextIdx);
+
+      if (sideRef.current === "A" && idx === list.length - 1) {
+        // Last track of side A finished — flip the record to side B
+        handleFlip();
+        setTimeout(() => handleSongClick(0), 400); // wait for flip animation
+      } else {
+        handleSongClick((idx + 1) % list.length);
+      }
     };
 
     audio.addEventListener("ended", handleEnded);
     return () => audio.removeEventListener("ended", handleEnded);
-  }, [handleSongClick]);
+  }, [handleSongClick, handleFlip]);
 
   // ── Flip ───────────────────────────────────────────────────────────────────
   const handleFlip = useCallback(() => {
