@@ -23,8 +23,20 @@ const REC_CY     = 50;
 const REC_RADIUS = 17;
 
 // Scratch physics constants — must stay in sync with the tick-loop spin rate
-const NORMAL_SPIN = Math.PI * 0.8; // rad/s: the record's autonomous spin speed
-const DRAG_TO_RAD = 0.05;          // px → rad conversion (matches recordPivot update)
+const NORMAL_SPIN     = Math.PI * 0.8; // rad/s: the record's autonomous spin speed
+const DRAG_TO_RAD     = 0.05;          // px → rad conversion (visual only)
+const SCRATCH_1X_PX_S = 280;          // cursor px/s that equals 1× playback rate
+
+// Build a reversed copy of an AudioBuffer for backward scratch playback
+function reverseBuffer(ctx: AudioContext, buf: AudioBuffer): AudioBuffer {
+  const out = ctx.createBuffer(buf.numberOfChannels, buf.length, buf.sampleRate);
+  for (let c = 0; c < buf.numberOfChannels; c++) {
+    const src = buf.getChannelData(c);
+    const dst = out.getChannelData(c);
+    for (let n = 0; n < buf.length; n++) dst[n] = src[buf.length - 1 - n];
+  }
+  return out;
+}
 
 // Viewport aspect ratio used to de-stretch y when computing fan angles
 const APPROX_ASPECT = 16 / 9;
@@ -65,13 +77,24 @@ export default function AlbumScene() {
   const activeTrackRef = useRef<number | null>(null);
   const sideRef        = useRef<Side>("A");
   const flipRef        = useRef({ current: 0, target: 0 });
-  // Scratch state — angular-velocity model so rate 0=paused, 1=normal, tracks cursor
+  // Scratch state — visual (angularVel) and audio (audioRate) tracked independently
   const scratchRef = useRef({
     active:        false,
     lastX:         0,
     lastTimestamp: 0,
-    angularVel:    NORMAL_SPIN, // rad/s; start at normal spin so first play is instant
+    angularVel:    NORMAL_SPIN, // rad/s — drives visual spin + inertia
+    audioRate:     1.0,         // audio-time / real-time ratio (+ = fwd, - = back)
   });
+
+  // Web Audio scratch engine — buffers loaded in background when a track starts
+  const audioCtxRef    = useRef<AudioContext | null>(null);
+  const fwdBufRef      = useRef<AudioBuffer | null>(null);
+  const revBufRef      = useRef<AudioBuffer | null>(null);
+  const scratchSrcRef  = useRef<AudioBufferSourceNode | null>(null);
+  const scratchGainRef = useRef<GainNode | null>(null);
+  const scratchPosRef  = useRef(0);         // playhead in audio-seconds
+  const scratchDirRef  = useRef<1 | -1>(1); // direction of current source node
+  const loadedForRef   = useRef("");         // URL whose buffer is in fwdBufRef/revBufRef
 
   const commitPhase = useCallback((p: Phase) => {
     phaseRef.current = p;
@@ -221,16 +244,46 @@ export default function AlbumScene() {
         return out;
       };
 
+      // ── Web Audio scratch helpers ─────────────────────────────────────────
+      const stopScratchSrc = () => {
+        const s = scratchSrcRef.current;
+        if (s) { try { s.stop(0); } catch {} s.disconnect(); scratchSrcRef.current = null; }
+      };
+
+      // Start an AudioBufferSourceNode at |pos| seconds in the original audio.
+      // dir=1 plays forward, dir=-1 plays backward (reversed buffer).
+      const playScratchFrom = (pos: number, dir: 1 | -1, rate: number) => {
+        const ctx  = audioCtxRef.current;
+        const fwd  = fwdBufRef.current;
+        const rev  = revBufRef.current;
+        const gain = scratchGainRef.current;
+        if (!ctx || !fwd || !rev || !gain) return;
+        if (ctx.state === "suspended") ctx.resume();
+        stopScratchSrc();
+        const buf    = dir === 1 ? fwd : rev;
+        const offset = dir === 1 ? pos : Math.max(0, fwd.duration - pos);
+        const src    = ctx.createBufferSource();
+        src.buffer   = buf;
+        src.playbackRate.value = Math.max(0.01, rate);
+        src.connect(gain);
+        src.start(0, Math.min(buf.duration - 0.001, Math.max(0, offset)));
+        scratchSrcRef.current = src;
+        scratchDirRef.current = dir;
+      };
+
       const onPointerDown = (e: PointerEvent) => {
         ptrDownX = e.clientX;
         ptrDownY = e.clientY;
 
         if (phaseRef.current === "playing") {
-          // Grabbing the record halts it — user now directly controls its position
+          // Capture current playhead and pause HTMLAudio — Web Audio takes over
+          scratchPosRef.current            = audioRef.current?.currentTime ?? 0;
+          audioRef.current?.pause();
           scratchRef.current.active        = true;
           scratchRef.current.lastX         = e.clientX;
           scratchRef.current.lastTimestamp = performance.now();
           scratchRef.current.angularVel    = 0;
+          scratchRef.current.audioRate     = 0;
           canvas.setPointerCapture(e.pointerId);
           canvas.style.cursor = "grabbing";
         }
@@ -239,39 +292,84 @@ export default function AlbumScene() {
       const onPointerMove = (e: PointerEvent) => {
         if (!scratchRef.current.active || !recordPivot) return;
 
-        const now          = performance.now();
-        const dt           = (now - scratchRef.current.lastTimestamp) / 1000; // seconds
-        const dx           = e.clientX - scratchRef.current.lastX;
-        const angularDelta = dx * DRAG_TO_RAD;
+        const now = performance.now();
+        const dt  = (now - scratchRef.current.lastTimestamp) / 1000;
+        const dx  = e.clientX - scratchRef.current.lastX;
 
         if (dt > 0 && dt < 0.1) {
-          // Angular velocity in rad/s, EMA-smoothed to suppress high-frequency jitter
-          const rawVel = angularDelta / dt;
+          // Visual angular velocity (rad/s) — used for inertia after release
+          const rawAngVel = (dx * DRAG_TO_RAD) / dt;
           scratchRef.current.angularVel =
-            scratchRef.current.angularVel * 0.55 + rawVel * 0.45;
+            scratchRef.current.angularVel * 0.5 + rawAngVel * 0.5;
+
+          // Audio rate — calibrated independently from visual rotation
+          const rawRate = dx / (dt * SCRATCH_1X_PX_S);
+          scratchRef.current.audioRate =
+            scratchRef.current.audioRate * 0.5 + rawRate * 0.5;
+
+          // Advance tracked playhead
+          scratchPosRef.current = Math.max(
+            0,
+            scratchPosRef.current + scratchRef.current.audioRate * dt,
+          );
         }
 
         scratchRef.current.lastX         = e.clientX;
         scratchRef.current.lastTimestamp = now;
 
         // Visual: record follows cursor directly
-        recordPivot.rotation.y += angularDelta;
+        recordPivot.rotation.y += dx * DRAG_TO_RAD;
 
-        // Audio: angular velocity 0 → rate≈0 (paused), NORMAL_SPIN → rate 1.0
-        const audio = audioRef.current;
-        if (audio) {
-          const rate = scratchRef.current.angularVel / NORMAL_SPIN;
-          audio.playbackRate = Math.max(0.05, Math.min(3.0, rate));
+        // Audio
+        const rate    = scratchRef.current.audioRate;
+        const absRate = Math.abs(rate);
+        const newDir: 1 | -1 = rate >= 0 ? 1 : -1;
+
+        if (audioCtxRef.current && fwdBufRef.current) {
+          // Web Audio path — real forward AND backward playback
+          if (!scratchSrcRef.current || newDir !== scratchDirRef.current) {
+            playScratchFrom(scratchPosRef.current, newDir, absRate);
+          } else {
+            scratchSrcRef.current.playbackRate.value = Math.max(0.01, absRate);
+          }
+          // Mute when near-stopped (record held still)
+          const gain = scratchGainRef.current;
+          if (gain) {
+            gain.gain.setTargetAtTime(
+              absRate < 0.06 ? 0 : 1,
+              audioCtxRef.current.currentTime,
+              0.025,
+            );
+          }
+        } else {
+          // Fallback: HTMLAudio rate-change (forward only, no reverse)
+          const audio = audioRef.current;
+          if (audio) {
+            if (audio.paused && rate > 0.06) audio.play().catch(() => {});
+            audio.playbackRate = Math.max(0.05, Math.min(3, absRate));
+          }
         }
       };
 
       const onPointerUp = (e: PointerEvent) => {
-        // End scratch mode — release pointer capture and restore grab cursor
         if (scratchRef.current.active) {
           scratchRef.current.active = false;
+          stopScratchSrc();
+
+          // Hand playhead back to HTMLAudio and let tick loop ramp rate to 1×
+          const audio = audioRef.current;
+          if (audio && phaseRef.current === "playing") {
+            const dur = audio.duration;
+            const pos = isFinite(dur)
+              ? Math.min(scratchPosRef.current, dur - 0.05)
+              : scratchPosRef.current;
+            audio.currentTime = Math.max(0, pos);
+            audio.play().catch(() => {});
+            // audioRate is intentionally retained — tick loop inertia returns it to 1×
+          }
+
           canvas.releasePointerCapture(e.pointerId);
           canvas.style.cursor = "grab";
-          // playbackRate decays back to 1× in the tick loop
         }
 
         // Open-case click — only when idle and not a drag
@@ -317,30 +415,29 @@ export default function AlbumScene() {
         mixers.forEach((m) => m.update(delta));
 
         if (phaseRef.current === "playing" && recordPivot) {
-          if (scratchRef.current.active) {
-            // Record position is driven entirely by onPointerMove — nothing to do here
-          } else {
-            // Inertia: smoothly spin angularVel back toward NORMAL_SPIN after scratch
-            const diff = NORMAL_SPIN - scratchRef.current.angularVel;
-            if (Math.abs(diff) > 0.001) {
-              // Acceleration proportional to deficit — feels like motor engaging
-              scratchRef.current.angularVel += diff * Math.min(delta * 4.5, 0.28);
+          if (!scratchRef.current.active) {
+            // Visual inertia: angularVel returns to NORMAL_SPIN (motor re-engaging)
+            const vDiff = NORMAL_SPIN - scratchRef.current.angularVel;
+            if (Math.abs(vDiff) > 0.001) {
+              scratchRef.current.angularVel += vDiff * Math.min(delta * 4.5, 0.28);
             } else {
               scratchRef.current.angularVel = NORMAL_SPIN;
             }
-
-            // Visual rotation driven by current angular velocity
             recordPivot.rotation.y += scratchRef.current.angularVel * delta;
 
-            // Audio rate tracks the same angular velocity
+            // Audio inertia: audioRate returns to 1× after scratch
+            const aDiff = 1 - scratchRef.current.audioRate;
+            if (Math.abs(aDiff) > 0.01) {
+              scratchRef.current.audioRate += aDiff * Math.min(delta * 4.5, 0.28);
+            } else {
+              scratchRef.current.audioRate = 1;
+            }
             const tickAudio = audioRef.current;
-            if (tickAudio) {
-              const rate = scratchRef.current.angularVel / NORMAL_SPIN;
-              if (Math.abs(rate - 1) < 0.01) {
-                tickAudio.playbackRate = 1; // snap to exact 1× once settled
-              } else {
-                tickAudio.playbackRate = Math.max(0.1, Math.min(2.0, rate));
-              }
+            if (tickAudio && !tickAudio.paused) {
+              // audioRate may still be negative coming out of a backward scratch;
+              // clamp to 0.1 floor so HTMLAudio doesn't receive an invalid rate
+              const r = scratchRef.current.audioRate;
+              tickAudio.playbackRate = r >= 0.99 && r <= 1.01 ? 1 : Math.max(0.1, Math.min(2, r));
             }
           }
         }
@@ -363,6 +460,8 @@ export default function AlbumScene() {
         canvas.removeEventListener("pointerdown", onPointerDown);
         canvas.removeEventListener("pointermove", onPointerMove);
         canvas.removeEventListener("pointerup",   onPointerUp);
+        stopScratchSrc();
+        audioCtxRef.current?.close().catch(() => {});
         renderer.dispose();
       };
     })();
@@ -373,6 +472,32 @@ export default function AlbumScene() {
       cleanup?.();
     };
   }, [commitPhase]);
+
+  // ── Background-load a track's audio into Web Audio buffers for scratch ──────
+  const loadScratchBuffer = useCallback(async (src: string) => {
+    if (loadedForRef.current === src) return;
+    loadedForRef.current = src;
+    fwdBufRef.current = null;
+    revBufRef.current = null;
+    try {
+      // AudioContext must be created synchronously within a user-gesture call stack
+      if (!audioCtxRef.current) {
+        const ctx  = new AudioContext();
+        const gain = ctx.createGain();
+        gain.connect(ctx.destination);
+        audioCtxRef.current = ctx;
+        scratchGainRef.current = gain;
+      }
+      const ctx = audioCtxRef.current;
+      const res = await fetch(src);
+      if (loadedForRef.current !== src) return; // track changed while fetching
+      const ab  = await res.arrayBuffer();
+      if (loadedForRef.current !== src) return;
+      const buf = await ctx.decodeAudioData(ab);
+      fwdBufRef.current = buf;
+      revBufRef.current = reverseBuffer(ctx, buf);
+    } catch { /* non-fatal: scratch falls back to HTMLAudio rate-change only */ }
+  }, []);
 
   // ── Song click ─────────────────────────────────────────────────────────────
   const handleSongClick = useCallback(
@@ -399,12 +524,13 @@ export default function AlbumScene() {
           audio.src = track.src;
           audio.load();
           audio.play().catch(() => {});
+          loadScratchBuffer(track.src); // background-decode for Web Audio scratch
         } else {
           audio.src = "";
         }
       }
     },
-    [commitPhase]
+    [commitPhase, loadScratchBuffer]
   );
 
   // ── Auto-advance to next track when the current one ends ──────────────────
