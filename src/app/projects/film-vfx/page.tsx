@@ -18,10 +18,7 @@ export default function FilmVfxSectionPage() {
       </Link>
 
       <header className="mt-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.32em] text-black/55">
-          Project Section
-        </p>
-        <h1 className="mt-4 text-4xl font-semibold tracking-tight text-black/85">
+        <h1 className="text-4xl font-semibold tracking-tight text-black/85">
           Film / VFX
         </h1>
         <p className="mt-4 max-w-xl text-base leading-7 text-black/65">

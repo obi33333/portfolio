@@ -30,10 +30,7 @@ export default function ProjectsPage() {
   return (
     <main className="mx-auto w-full max-w-6xl px-6 py-14">
       <header className="max-w-2xl">
-        <p className="text-xs font-semibold uppercase tracking-[0.32em] text-black/55">
-          Projects
-        </p>
-        <h1 className="mt-4 text-4xl font-semibold tracking-tight text-black/85">
+        <h1 className="text-4xl font-semibold tracking-tight text-black/85">
           Projects
         </h1>
       </header>

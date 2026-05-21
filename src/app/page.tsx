@@ -4,7 +4,17 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import AlbumModelLink from "@/components/AlbumModelLink";
+import HeadshotKiosk from "@/components/HeadshotKiosk";
 import { ALBUM } from "@/content/album";
+
+const HEADSHOTS = [
+  { src: "/headshots/R5__2022.jpg", alt: "Headshot" },
+  { src: "/headshots/R5__2023.jpg", alt: "Headshot" },
+  { src: "/headshots/R5__2028.jpg", alt: "Headshot" },
+  { src: "/headshots/R5__2034.jpg", alt: "Headshot" },
+  { src: "/headshots/R5__2037.jpg", alt: "Headshot" },
+  { src: "/headshots/R5__2100.jpg", alt: "Headshot" },
+];
 
 const PROJECT_SECTIONS = [
   {
@@ -98,8 +108,21 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ── Right: album (sidebar) ── */}
+        {/* ── Right: headshots + album (sidebar) ── */}
         <div className="flex flex-col gap-10">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-black/55">
+              Headshots
+            </p>
+            <div className="mt-3">
+              <HeadshotKiosk
+                images={HEADSHOTS}
+                className="h-[300px] w-full max-w-[340px]"
+                secondsPerRevolution={90}
+              />
+            </div>
+          </div>
+
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-black/55">
               Album
@@ -108,7 +131,7 @@ export default function Home() {
             <AlbumModelLink
               src={ALBUM.modelSrc}
               alt={`${ALBUM.title} model`}
-              modelHeight={460}
+              modelHeight={380}
             />
           </div>
         </div>
