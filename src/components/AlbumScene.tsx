@@ -407,7 +407,7 @@ export default function AlbumScene() {
           setTimeout(() => commitPhase("revealed"), 500);
         } else {
           openingActions.forEach((a) => {
-            a.timeScale = bagActions.has(a) ? 2.5 : 1;
+            a.timeScale = bagActions.has(a) ? 2.5 : 1.4;
             a.play();
           });
         }

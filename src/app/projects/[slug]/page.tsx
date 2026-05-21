@@ -43,7 +43,7 @@ function MediaItem({
 }) {
   if (item.type === "gif") {
     return (
-      <div className="overflow-hidden rounded-xl border border-black/10 bg-black">
+      <div className="overflow-hidden rounded-xl border border-black/10 bg-black w-fit mx-auto">
         <video
           src={item.src}
           className="mx-auto block max-h-[65vh] w-auto max-w-full"
@@ -58,7 +58,7 @@ function MediaItem({
   }
   if (item.type === "video") {
     return (
-      <div className="overflow-hidden rounded-xl border border-black/10 bg-black">
+      <div className="overflow-hidden rounded-xl border border-black/10 bg-black w-fit mx-auto">
         <video
           src={item.src}
           className="mx-auto block max-h-[65vh] w-auto max-w-full"

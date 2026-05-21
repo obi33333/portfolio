@@ -19,7 +19,7 @@ export default function MediaGallery({
 
   return (
     <div className="space-y-3">
-      <div className="overflow-hidden rounded-xl border border-black/10 bg-black">
+      <div className="overflow-hidden rounded-xl border border-black/10 bg-black w-fit mx-auto">
         {item.type === "gif" ? (
           <video
             key={item.src}

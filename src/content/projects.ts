@@ -61,7 +61,7 @@ const PROJECTS: Project[] = [
     title: "Desktop Pet",
     summary:
       "A custom Shimeji desktop companion based on Oba, a personal doodle character. Adapted from a vintage early-2000s Japanese desktop pet application.",
-    tags: ["Creative Coding"],
+    tags: ["Animation", "Creative Coding"],
     preview: { type: "image", src: "/projects/desktop-pet/DesktopPetCoverImage.png", alt: "Desktop Pet character screenshot" },
     media: [{ type: "video", src: "/projects/desktop-pet/demo.mp4" }],
     body: [
@@ -76,7 +76,7 @@ const PROJECTS: Project[] = [
     title: "Custom Lively Wallpapers",
     summary:
       "An interactive desktop wallpaper with integrated Spotify controls and a diegetic clock, built by extending an open-source Lively Wallpaper using Three.js.",
-    tags: ["Creative Coding"],
+    tags: ["3D", "Creative Coding"],
     preview: { type: "image", src: "/projects/custom-lively-wallpapers/cover.png", alt: "Living room wallpaper preview" },
     media: [{ type: "video", src: "/projects/custom-lively-wallpapers/demo.mp4" }],
     body: [
@@ -94,7 +94,7 @@ const PROJECTS: Project[] = [
     tags: ["Blender", "3D", "Animation"],
     preview: { type: "image", src: "/projects/indy-film/preview.png", alt: "Indie Film Project render still" },
     media: [
-      { type: "video", src: "/projects/indy-film/birds.mp4" },
+      { type: "gif", src: "/projects/indy-film/birds.mp4" },
       { type: "video", src: "/projects/indy-film/skyfish.mp4" },
     ],
     body: [
@@ -110,7 +110,7 @@ const PROJECTS: Project[] = [
     summary:
       "A live texture painting experiment in Blender using real watercolor paints and a webcam as input. A series of still life models painted and rendered simultaneously.",
     tags: ["Blender", "3D", "Creative Coding"],
-    preview: { type: "video", src: "/projects/live-texture-painting/demo.mp4" },
+    preview: { type: "gif", src: "/projects/live-texture-painting/demo.mp4" },
     media: [
       { type: "video", src: "/projects/live-texture-painting/timelapse.mp4" },
       { type: "video", src: "/projects/live-texture-painting/clip3.mp4" },
@@ -144,7 +144,7 @@ const PROJECTS: Project[] = [
     title: "Poems",
     summary:
       "A series of Blender renders paired with original poetry and music composed in FL Studio. Visual compositing done in Premiere Pro.",
-    tags: ["Blender", "Animation"],
+    tags: ["Blender", "3D", "Animation"],
     preview: { type: "image", src: "/projects/poems/cover.jpg", alt: "Poems visual still" },
     media: [
       { type: "video", src: "/projects/poems/demo.mp4", caption: "Poem 1" },
@@ -212,7 +212,7 @@ const PROJECTS: Project[] = [
       "A rotoscoped animation made in Blender's 2D animation toolkit during sophomore year. A focused dive into frame-by-frame technique.",
     tags: ["Blender", "Animation"],
     preview: { type: "image", src: "/projects/rotoscope/cover.png", alt: "Rotoscope animation still" },
-    media: [{ type: "video", src: "/projects/rotoscope/demo.mp4" }],
+    media: [{ type: "gif", src: "/projects/rotoscope/demo.mp4" }],
     body: [
       "Made as an exercise in Blender's Grease Pencil 2D animation system, this rotoscope project involved tracing and re-interpreting live footage frame by frame within a 3D environment.",
       "At the time this was a new discipline — the patience required for frame-by-frame work, and the particular aesthetic that emerges when human motion is filtered through a handmade mark.",
@@ -226,7 +226,7 @@ const PROJECTS: Project[] = [
     title: "Tell Me What's Real",
     summary:
       "A music video made for Angelo (Disuko Music) using After Effects, Premiere Pro, TouchDesigner, and Blender. A full-pipeline collaborative creative project.",
-    tags: ["Blender", "TouchDesigner", "Music Video"],
+    tags: ["Blender", "TouchDesigner", "Animation", "Music Video"],
     preview: { type: "image", src: "/projects/tell-me-whats-real/cover.jpg", alt: "Tell Me What's Real music video still" },
     media: [{ type: "video", src: "/projects/tell-me-whats-real/demo.mp4" }],
     body: [
@@ -278,9 +278,9 @@ const PROJECTS: Project[] = [
     summary:
       "A custom VST programmed in FL Studio that converts stereo audio into XY data and plays it back on an oscilloscope as real-time vector graphics. Includes SVGs rendered as oscilloscope visuals.",
     tags: ["Audio Visualization", "Creative Coding"],
-    preview: { type: "video", src: "/projects/oscilloscope/preview.mp4" },
+    preview: { type: "gif", src: "/projects/oscilloscope/preview.mp4" },
     media: [
-      { type: "video", src: "/projects/oscilloscope/preview.mp4" },
+      { type: "gif", src: "/projects/oscilloscope/preview.mp4" },
       { type: "video", src: "/projects/oscilloscope/demo.mp4" },
     ],
     body: [
@@ -298,7 +298,7 @@ const PROJECTS: Project[] = [
     title: "Aces Wired",
     summary:
       "A short film set in a neon-lit dystopian future where four gambling addicts must expose a rigged poker system. A senior-year collaborative project using Premiere Pro, After Effects, and Blender.",
-    tags: ["Blender", "VFX"],
+    tags: ["Blender", "3D", "VFX"],
     timeframe: "Senior year, Chatham University",
     preview: { type: "image", src: "/projects/aces-wired/cover.jpg", alt: "Aces Wired film still" },
     media: [{ type: "video", src: "/projects/aces-wired/demo.mp4" }],
@@ -347,7 +347,7 @@ const PROJECTS: Project[] = [
     title: "SciFi VFX",
     summary:
       "A Blender VFX composite using Mixamo character animations and an Ian Hubert-inspired handheld camera workflow. Made in third year as a personal skills push.",
-    tags: ["Blender", "VFX"],
+    tags: ["Blender", "Animation", "VFX"],
     preview: { type: "video", src: "/projects/vfx-kill-robot/demo.mp4" },
     media: [{ type: "video", src: "/projects/vfx-kill-robot/maniacSMALL.mp4" }],
     body: [
@@ -362,9 +362,9 @@ const PROJECTS: Project[] = [
     title: "VFX Spaceship",
     summary:
       "A sci-fi VFX sequence built in Blender using techniques from Ian Hubert's production workflow. A personal exploration of fantastical environments and practical-looking composites.",
-    tags: ["Blender", "VFX"],
-    preview: { type: "video", src: "/projects/vfx-spaceship/demo.mp4" },
-    media: [{ type: "video", src: "/projects/vfx-spaceship/demo.mp4" }],
+    tags: ["Blender", "3D", "VFX"],
+    preview: { type: "gif", src: "/projects/vfx-spaceship/demo.mp4" },
+    media: [{ type: "gif", src: "/projects/vfx-spaceship/demo.mp4" }],
     body: [
       "Sci-fi has always been a reference point for me — the way it uses visual spectacle to locate viewers in impossible places. This project was an attempt to build that feeling using only Blender and publicly available techniques.",
       "Drawing heavily from Ian Hubert's unlisted YouTube tutorials, the project focuses on the combination of handheld camera aesthetics with high-production-value 3D environments — making the fantastical feel grounded.",
@@ -383,7 +383,7 @@ const PROJECTS: Project[] = [
     timeframe: "Senior year thesis, Chatham University",
     preview: { type: "image", src: "/projects/capstone/cover.jpg", alt: "Haptic fob device photo" },
     media: [
-      { type: "video", src: "/projects/capstone/demo.mp4" },
+      { type: "gif", src: "/projects/capstone/demo.mp4" },
       { type: "image", src: "/projects/capstone/img2.jpeg", alt: "Haptic fob device" },
       { type: "image", src: "/projects/capstone/img5.jpeg", alt: "Device assembly" },
       { type: "image", src: "/projects/capstone/img563.jpeg", alt: "Device detail" },
@@ -434,7 +434,7 @@ const PROJECTS: Project[] = [
     title: "Knights of Isiah",
     summary:
       "A custom Raspberry Pi multitool built for a friend, featuring RFID scanning, a virtual pet, infrared signal cloning, and a microphone-based frequency reader.",
-    tags: ["Electronics", "Physical Computing"],
+    tags: ["Electronics", "Physical Computing", "Prototyping"],
     preview: { type: "image", src: "/projects/knights-of-isiah/cover.png", alt: "Knights of Isiah device photo" },
     media: [
       { type: "video", src: "/projects/knights-of-isiah/doc1.mp4" },
@@ -489,10 +489,10 @@ const PROJECTS: Project[] = [
     title: "Teaching Assistant — Clayze Program",
     summary:
       "Full-time Teaching Assistant for a joint CMU / Chatham University immersive media program (2022–2024), coaching students in 3D modeling, Arduino, RealSense, LookingGlass, and Meta Quest development.",
-    tags: ["Electronics", "3D"],
+    tags: ["Electronics", "3D", "Physical Computing"],
     timeframe: "2022–2024",
     preview: { type: "image", src: "/projects/clayze-ta/thumb.jpg", alt: "Clayze program in session" },
-    media: [{ type: "video", src: "/projects/clayze-ta/demo.mp4" }],
+    media: [{ type: "gif", src: "/projects/clayze-ta/demo.mp4" }],
     links: {
       article: "https://www.pulse.chatham.edu/blog-stories/immersive-media-imm-academic-visit-day-chatham-university-3d-models-clayze",
     },
@@ -543,7 +543,7 @@ const PROJECTS: Project[] = [
     tags: ["3D"],
     preview: { type: "image", src: "/projects/olkes-collection/preview.png", alt: "Three heads mask 3D render" },
     media: [
-      { type: "video", src: "/projects/olkes-collection/demo.mp4", caption: "Polycam scan preview — turntable render of the three heads mask" },
+      { type: "gif", src: "/projects/olkes-collection/demo.mp4", caption: "Polycam scan preview — turntable render of the three heads mask" },
       { type: "image", src: "/projects/olkes-collection/three_heads_gpu.png", alt: "Three heads mask render", caption: "Three Heads Mask — image-textured 3D render" },
       { type: "image", src: "/projects/olkes-collection/mask_render.png", alt: "Three heads mask image texture render", caption: "Three Heads Mask — image texture applied" },
       { type: "image", src: "/projects/olkes-collection/mask_final.png", alt: "Mask final render", caption: "Helmet Mask — final textured render" },
