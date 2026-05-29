@@ -68,7 +68,12 @@ export default function HeadshotKiosk({
           const current = angleRef.current;
           const diff = ((target - current + 540) % 360) - 180;
           const alpha = 1 - Math.exp(-k * dt);
-          angleRef.current = Math.abs(diff) < 0.15 ? target : current + diff * alpha;
+          if (Math.abs(diff) < 0.15) {
+            angleRef.current = target;
+            targetAngleRef.current = null; // snap done — resume auto-rotation
+          } else {
+            angleRef.current = current + diff * alpha;
+          }
         }
       }
 
@@ -133,7 +138,7 @@ export default function HeadshotKiosk({
       {/* Carousel */}
       <div
         className={[
-          "relative h-[340px] w-[280px] overflow-hidden perspective-[900px] sm:h-[360px] sm:w-[320px] select-none",
+          "relative h-[340px] w-[280px] overflow-hidden perspective-[900px] sm:h-[360px] sm:w-[320px] select-none cursor-grab active:cursor-grabbing",
           className,
         ]
           .filter(Boolean)
@@ -144,12 +149,6 @@ export default function HeadshotKiosk({
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerCancel}
-        onPointerLeave={() => {
-          if (!isDraggingRef.current) {
-            lastTsRef.current = null;
-            targetAngleRef.current = null;
-          }
-        }}
       >
         <div
           ref={carouselRef}
@@ -159,16 +158,13 @@ export default function HeadshotKiosk({
           {safeImages.map((img, idx) => (
             <div
               key={img.src}
-              className="absolute left-1/2 top-1/2 overflow-hidden rounded-2xl backface-hidden cursor-pointer"
+              className="absolute left-1/2 top-1/2 overflow-hidden rounded-2xl backface-hidden transition-shadow duration-200 hover:shadow-[0_0_24px_8px_rgba(255,255,255,0.45)]"
               style={{
                 width: itemWidth,
                 height: itemHeight,
                 transform: `translate(-50%, -50%) rotateY(${idx * step}deg) translateZ(${resolvedRadius}px)`,
               }}
               onPointerDown={() => { pointerDownSrcRef.current = img.src; }}
-              onPointerEnter={() => {
-                if (!isDraggingRef.current) targetAngleRef.current = -idx * step;
-              }}
             >
               <Image
                 src={img.src}

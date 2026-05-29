@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
 import AlbumModelLink from "@/components/AlbumModelLink";
 import HeadshotKiosk from "@/components/HeadshotKiosk";
 import { ALBUM } from "@/content/album";
@@ -16,99 +15,100 @@ const HEADSHOTS = [
   { src: "/headshots/R5__2100.jpg", alt: "Headshot" },
 ];
 
-const PROJECT_SECTIONS = [
-  {
-    slug: "one-day",
-    title: "One Day Projects",
-    overview: "Fast builds and experiments, a way to show off smaller projects.",
-    preview: "/projects/one-day/Screenshot 2026-05-16 154504.png",
-  },
-  {
-    slug: "robotics",
-    title: "Robotics / Product Production",
-    overview: "Robots, interactive objects, and physical computing work.",
-    preview: "/projects/robotics/IMG_0558.jpeg",
-  },
-  {
-    slug: "film-vfx",
-    title: "Film / VFX",
-    overview: "Compositing, 3D visuals, and post-production showcase.",
-    preview: "/projects/film-vfx/Slide_1.png",
-  },
-  {
-    slug: "professional",
-    title: "Professional Experience",
-    overview: "Work and roles across teams and studios.",
-    preview: "/projects/professional/three_heads_gpu.jpg",
-  },
-];
-
 export default function Home() {
-  // Default to "one-day" so the card is always visible on load.
-  // State never resets to null — hovering a pill switches the active section,
-  // and it stays on that section when the mouse leaves.
-  const [activeSection, setActiveSection] = useState<string>("one-day");
-  const active = PROJECT_SECTIONS.find((s) => s.slug === activeSection)!;
-
   return (
     <main className="mx-auto w-full max-w-5xl px-6 py-12">
 
       <div className="grid gap-12 lg:grid-cols-[3fr_2fr] lg:items-start">
 
-        {/* ── Left: name label + CTAs + project tabs ── */}
+        {/* ── Left: name + hero project ── */}
         <div className="flex flex-col gap-6">
 
           <h1 className="text-3xl font-bold tracking-tight text-black/85">
             Obadiah Bernstein
           </h1>
 
-          {/* Section pills + persistent preview card.
-              The card is absolute so it never shifts the grid or contact section.
-              activeSection never resets to null — it stays on the last hovered pill. */}
-          <div className="relative flex flex-col gap-3">
-            <div className="flex flex-wrap gap-2">
-              {PROJECT_SECTIONS.map((section) => (
-                <Link
-                  key={section.slug}
-                  href={`/projects#${section.slug}`}
-                  className={[
-                    "rounded-full border px-4 py-1.5 text-sm transition-colors",
-                    activeSection === section.slug
-                      ? "border-black/25 bg-white/60 text-black"
-                      : "border-black/10 text-black/65 hover:border-black/20 hover:text-black",
-                  ].join(" ")}
-                  onMouseEnter={() => setActiveSection(section.slug)}
-                >
-                  {section.title}
-                </Link>
-              ))}
-            </div>
+          <Link
+            href="/projects"
+            className="text-sm text-black/50 transition-colors hover:text-black"
+          >
+            View all projects →
+          </Link>
 
-            {/* Always rendered — active section never goes null */}
-            <div className="mt-2 lg:absolute lg:left-0 lg:right-0 lg:top-full lg:z-20 lg:mt-2">
-              <Link
-                href={`/projects#${active.slug}`}
-                className="block overflow-hidden rounded-xl border border-black/10 bg-white/70 shadow-sm transition-opacity hover:opacity-90"
-              >
-                <div className="h-[520px] overflow-hidden">
-                  <Image
-                    src={active.preview}
-                    alt={active.title}
-                    width={480}
-                    height={224}
-                    className="h-full w-full object-cover transition-transform duration-300 hover:scale-[1.02]"
-                  />
-                </div>
-                <div className="px-4 py-3">
-                  <p className="text-sm font-semibold text-black">{active.title}</p>
-                  <p className="mt-0.5 text-xs leading-5 text-black/55">{active.overview}</p>
-                </div>
-              </Link>
+          {/* Capstone hero card */}
+          <Link
+            href="/projects/capstone"
+            className="group block overflow-hidden rounded-2xl border border-black/10 bg-white/60 transition-all duration-200 hover:-translate-y-0.5 hover:border-black/20 hover:shadow-md"
+          >
+            <div className="h-52 overflow-hidden bg-black/5">
+              <Image
+                src="/projects/capstone/cover.jpg"
+                alt="Haptic Alarm System"
+                width={640}
+                height={176}
+                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                priority
+              />
             </div>
-          </div>
+            <div className="p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-black/45">
+                Featured Project
+              </p>
+              <h2 className="mt-1.5 text-base font-semibold tracking-tight text-black/85 group-hover:text-black">
+                Haptic Alarm System
+              </h2>
+              <p className="mt-0.5 text-xs text-black/40">Senior year thesis, Chatham University</p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {["Electronics", "Physical Computing", "Prototyping", "Robotics"].map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full border border-black/10 bg-white/80 px-2.5 py-1 text-xs text-black/60"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </Link>
+
+          {/* WJ Beitler card */}
+          <Link
+            href="/projects/wj-beitler"
+            className="group block overflow-hidden rounded-2xl border border-black/10 bg-white/60 transition-all duration-200 hover:-translate-y-0.5 hover:border-black/20 hover:shadow-md"
+          >
+            <div className="h-52 overflow-hidden bg-black/5">
+              <Image
+                src="/projects/wj-beitler/thumb.jpg"
+                alt="W.J. Beitler"
+                width={640}
+                height={176}
+                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+              />
+            </div>
+            <div className="p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-black/45">
+                Professional Experience
+              </p>
+              <h2 className="mt-1.5 text-base font-semibold tracking-tight text-black/85 group-hover:text-black">
+                .NET MAUI Developer &amp; IT Analyst
+              </h2>
+              <p className="mt-0.5 text-xs text-black/40">W.J. Beitler &nbsp;·&nbsp; 2025–Present</p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {[".NET MAUI", "C#", "SQL", "Mobile Development"].map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full border border-black/10 bg-white/80 px-2.5 py-1 text-xs text-black/60"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </Link>
+
         </div>
 
-        {/* ── Right: headshots + album (sidebar) ── */}
+        {/* ── Right: headshots + album ── */}
         <div className="flex flex-col gap-10">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-black/55">

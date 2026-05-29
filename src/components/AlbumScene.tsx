@@ -72,6 +72,7 @@ export default function AlbumScene() {
   const [activeTrack,  setActiveTrack]  = useState<number | null>(null);
   const [side,         setSide]         = useState<Side>("A");
   const [hoveredTrack, setHoveredTrack] = useState<number | null>(null);
+  const [modelLoaded,  setModelLoaded]  = useState(false);
 
   const phaseRef       = useRef<Phase>("idle");
   const activeTrackRef = useRef<number | null>(null);
@@ -170,6 +171,7 @@ export default function AlbumScene() {
         )
       );
       if (disposed) return;
+      setModelLoaded(true);
 
       const mixers:         THREE.AnimationMixer[]  = [];
       const openingActions: THREE.AnimationAction[] = [];
@@ -597,6 +599,13 @@ export default function AlbumScene() {
       style={{ height: "calc(100dvh - 56px)" }}
     >
       <audio ref={audioRef} style={{ display: "none" }} />
+
+      {/* ── Loading text — hidden once model resolves ─────────────────── */}
+      {!modelLoaded && (
+        <p className="absolute inset-0 flex items-center justify-center text-sm text-black/30 tracking-wide pointer-events-none select-none" style={{ display: "flex" }}>
+          Model loading
+        </p>
+      )}
 
       {/* ── Canvas ────────────────────────────────────────────────────── */}
       <canvas
