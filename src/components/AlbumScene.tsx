@@ -73,6 +73,7 @@ export default function AlbumScene() {
   const [side,         setSide]         = useState<Side>("A");
   const [hoveredTrack, setHoveredTrack] = useState<number | null>(null);
   const [modelLoaded,  setModelLoaded]  = useState(false);
+  const [loadProgress, setLoadProgress] = useState(0);
 
   const phaseRef       = useRef<Phase>("idle");
   const activeTrackRef = useRef<number | null>(null);
@@ -162,11 +163,20 @@ export default function AlbumScene() {
       ];
 
       type GLTF = { scene: THREE.Object3D; animations: THREE.AnimationClip[] };
+      const bytesLoaded = [0, 0, 0];
       const gltfs: GLTF[] = await Promise.all(
         MODEL_PATHS.map(
-          (path) =>
+          (path, i) =>
             new Promise<GLTF>((resolve) =>
-              loader.load(path, resolve as (g: unknown) => void)
+              loader.load(
+                path,
+                resolve as (g: unknown) => void,
+                (e: ProgressEvent) => {
+                  bytesLoaded[i] = e.loaded;
+                  const total = bytesLoaded.reduce((a, b) => a + b, 0);
+                  setLoadProgress(Math.min(99, Math.round(total / 580000)));
+                }
+              )
             )
         )
       );
@@ -602,9 +612,17 @@ export default function AlbumScene() {
 
       {/* ── Loading text — hidden once model resolves ─────────────────── */}
       {!modelLoaded && (
-        <p className="absolute inset-0 flex items-center justify-center text-sm text-black/30 tracking-wide pointer-events-none select-none" style={{ display: "flex" }}>
-          Model loading
-        </p>
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none select-none">
+          <p className="text-sm text-black/30 tracking-wide">
+            Loading {loadProgress}%
+          </p>
+          <div className="w-32 h-0.5 bg-black/10 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-black/25 rounded-full transition-all duration-300"
+              style={{ width: `${loadProgress}%` }}
+            />
+          </div>
+        </div>
       )}
 
       {/* ── Canvas ────────────────────────────────────────────────────── */}
