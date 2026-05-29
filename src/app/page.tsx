@@ -40,7 +40,7 @@ export default function Home() {
             href="/projects/capstone"
             className="group block overflow-hidden rounded-2xl border border-black/10 bg-white/60 transition-all duration-200 hover:-translate-y-0.5 hover:border-black/20 hover:shadow-md"
           >
-            <div className="h-44 overflow-hidden bg-black/5">
+            <div className="h-52 overflow-hidden bg-black/5">
               <Image
                 src="/projects/capstone/cover.jpg"
                 alt="Haptic Alarm System"
@@ -76,7 +76,7 @@ export default function Home() {
             href="/projects/wj-beitler"
             className="group block overflow-hidden rounded-2xl border border-black/10 bg-white/60 transition-all duration-200 hover:-translate-y-0.5 hover:border-black/20 hover:shadow-md"
           >
-            <div className="h-44 overflow-hidden bg-black/5">
+            <div className="h-52 overflow-hidden bg-black/5">
               <Image
                 src="/projects/wj-beitler/thumb.jpg"
                 alt="W.J. Beitler"
