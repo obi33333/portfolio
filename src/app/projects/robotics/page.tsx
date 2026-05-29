@@ -22,8 +22,7 @@ export default function RoboticsSectionPage() {
           Robotics / Product Production
         </h1>
         <p className="mt-4 max-w-xl text-base leading-7 text-black/65">
-          Hardware projects, physical computing, and product development work — from rapid
-          cardboard prototypes to senior thesis systems deployed in medical contexts.
+          Physical builds and interactive systems. Most started as cardboard prototypes. My senior thesis — a haptic alarm system designed for people with hearing loss — is in here too.
         </p>
       </header>
 

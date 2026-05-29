@@ -22,8 +22,7 @@ export default function ProfessionalSectionPage() {
           Professional Experience
         </h1>
         <p className="mt-4 max-w-xl text-base leading-7 text-black/65">
-          Selected professional roles and contracted work — teaching, engineering internships,
-          live event production, and cultural preservation projects.
+          Jobs and contracted work — teaching, software development, live event production, and a cultural preservation project.
         </p>
       </header>
 

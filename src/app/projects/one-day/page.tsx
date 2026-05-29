@@ -22,8 +22,7 @@ export default function OneDaySectionPage() {
           One Day Projects
         </h1>
         <p className="mt-4 max-w-xl text-base leading-7 text-black/65">
-          Fast builds and experiments made in a single day — rapid prototypes, creative tools,
-          and personal explorations across code, hardware, and media.
+          Projects I built in a day — usually to test an idea or just see if something would work. Covers code, hardware, and a bit of everything else.
         </p>
       </header>
 
