@@ -377,7 +377,7 @@ const PROJECTS: Project[] = [
     title: "Haptic Alarm System (Capstone)",
     summary:
       "Senior immersive media thesis: a haptic alarm system to replace audio alerts in medical environments where alarm fatigue is a real problem.",
-    tags: ["Electronics", "Physical Computing", "Prototyping", "Robotics", "C++", "C#", ".NET", "SQL"],
+    tags: ["Electronics", "Physical Computing", "Prototyping", "Robotics", "C++", "C#", ".NET", ".NET MAUI", "SQL"],
     timeframe: "Senior year thesis, Chatham University",
     preview: { type: "image", src: "/projects/capstone/cover.jpg", alt: "Haptic fob device photo" },
     media: [
