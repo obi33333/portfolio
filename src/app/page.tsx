@@ -79,12 +79,12 @@ export default function Home() {
             href="/projects/wj-beitler"
             className="group block overflow-hidden rounded-2xl border border-black/10 bg-white/60 transition-all duration-200 hover:-translate-y-0.5 hover:border-black/20 hover:shadow-md"
           >
-            <div className="h-40 overflow-hidden bg-black/5">
+            <div className="h-64 overflow-hidden bg-black/5">
               <Image
                 src="/projects/wj-beitler/thumb.jpg"
                 alt="W.J. Beitler"
                 width={640}
-                height={160}
+                height={256}
                 className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
               />
             </div>
@@ -92,11 +92,14 @@ export default function Home() {
               <p className="text-xs font-semibold uppercase tracking-[0.28em] text-black/45">
                 Professional Experience
               </p>
-              <h2 className="mt-2 text-base font-semibold tracking-tight text-black/85 group-hover:text-black">
+              <h2 className="mt-2 text-lg font-semibold tracking-tight text-black/85 group-hover:text-black">
                 .NET MAUI Developer &amp; IT Analyst
               </h2>
               <p className="mt-0.5 text-xs text-black/40">W.J. Beitler &nbsp;·&nbsp; 2025–Present</p>
-              <div className="mt-3 flex flex-wrap gap-2">
+              <p className="mt-3 text-sm leading-6 text-black/65">
+                App developer and IT analyst at W.J. Beitler, a trucking company. Building mobile interfaces in .NET MAUI and maintaining internal systems.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
                 {[".NET MAUI", "C#", "SQL", "Mobile Development"].map((tag) => (
                   <span
                     key={tag}
