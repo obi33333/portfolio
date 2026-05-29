@@ -490,7 +490,7 @@ const PROJECTS: Project[] = [
     preview: { type: "image", src: "/projects/wj-beitler/thumb.jpg", alt: "W.J. Beitler app screenshot" },
     media: [{ type: "video", src: "/projects/wj-beitler/demo.mp4" }],
     body: [
-      "I work at W.J. Beitler as a .NET MAUI developer and IT analyst. Beitler is a trucking company.",
+      "I work at W.J. Beitler as a .NET MAUI developer and IT analyst. W.J. Beitler is a trucking company.",
       "On the development side I write XAML pages and UI components, integrate custom libraries, and use SQL Management Studio to track operational data. I also wrote batch tools to automate ADB device connections for the team.",
       "I have also been refactoring legacy Web API controller classes to align with a code-generation-based architecture.",
     ],
