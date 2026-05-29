@@ -1,10 +1,17 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import AlbumModelLink from "@/components/AlbumModelLink";
 import HeadshotKiosk from "@/components/HeadshotKiosk";
 import { ALBUM } from "@/content/album";
+
+const ALBUM_MODEL_PARTS = [
+  "/album/model/Parts/record.glb",
+  "/album/model/Parts/recordCase.glb",
+  "/album/model/Parts/recordBag.glb",
+];
 
 const HEADSHOTS = [
   { src: "/headshots/R5__2022.jpg", alt: "Headshot" },
@@ -16,6 +23,16 @@ const HEADSHOTS = [
 ];
 
 export default function Home() {
+  useEffect(() => {
+    ALBUM_MODEL_PARTS.forEach((href) => {
+      const link = document.createElement("link");
+      link.rel = "prefetch";
+      link.href = href;
+      link.as = "fetch";
+      document.head.appendChild(link);
+    });
+  }, []);
+
   return (
     <main className="mx-auto w-full max-w-5xl px-6 py-12">
 
