@@ -21,7 +21,7 @@ export default function SiteHeader() {
             About
           </Link>
           <a
-            href="/resume.pdf"
+            href="/Obadiah_Bernstein_Resume.pdf"
             download="Obadiah_Bernstein_Resume.pdf"
             className="hover:text-black transition-colors"
           >

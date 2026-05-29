@@ -22,7 +22,7 @@ export default function RoboticsSectionPage() {
           Robotics / Product Production
         </h1>
         <p className="mt-4 max-w-xl text-base leading-7 text-black/65">
-          Physical builds and interactive systems. Most started as cardboard prototypes. My senior thesis — a haptic alarm system designed for people with hearing loss — is in here too.
+          Physical builds and interactive systems. Most started as cardboard prototypes. My senior thesis is a haptic alarm system designed to reduce alarm fatigue in medical environments.
         </p>
       </header>
 
