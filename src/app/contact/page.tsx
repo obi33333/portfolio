@@ -51,7 +51,7 @@ export default function ContactPage() {
           <div className="mt-5 flex items-center justify-center gap-4">
             <a
               href="/ObadiahBernsteinResume.pdf"
-              download="ObadiahBernsteinResume.pdf"
+              download="Obadiah_Bernstein_Resume.pdf"
               className="rounded-full border border-white/25 px-5 py-2 text-sm text-white/80 hover:border-white/60 hover:text-white transition-colors"
             >
               Download Resume

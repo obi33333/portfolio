@@ -6,22 +6,22 @@ const CATEGORIES: { slug: Project["category"]; title: string; summary: string }[
   {
     slug: "one-day",
     title: "One Day Projects",
-    summary: "Fast builds and experiments, a way to show off smaller projects.",
+    summary: "Quick experiments and builds I made in a day.",
   },
   {
     slug: "robotics",
     title: "Robotics / Product Production",
-    summary: "Robots, interactive objects, and physical computing work.",
+    summary: "Electronics, robots, and hands-on physical computing.",
   },
   {
     slug: "film-vfx",
     title: "Film / VFX",
-    summary: "Compositing, 3D visuals, and post-production showcase.",
+    summary: "Short films, VFX composites, and video work.",
   },
   {
     slug: "professional",
     title: "Professional Experience",
-    summary: "Work and roles across teams and studios.",
+    summary: "Jobs and contracted roles I've held.",
   },
 ];
 
