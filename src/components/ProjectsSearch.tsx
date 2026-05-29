@@ -47,13 +47,13 @@ export default function ProjectsSearch({ projects, categories }: Props) {
       {!isFiltering && (
         <nav className="mt-8 flex flex-wrap gap-3 text-sm">
           {categories.map((cat) => (
-            <a
+            <Link
               key={cat.slug}
-              href={`#${cat.slug}`}
+              href={`/projects/${cat.slug}`}
               className="rounded-full border border-black/10 bg-white/60 px-4 py-2 text-black/70 transition hover:border-black/20 hover:bg-white/80 hover:text-black"
             >
               {cat.title}
-            </a>
+            </Link>
           ))}
         </nav>
       )}
