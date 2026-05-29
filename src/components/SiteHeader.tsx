@@ -22,7 +22,7 @@ export default function SiteHeader() {
           </Link>
           <a
             href="/resume.pdf"
-            download="ObadiahBernsteinResume.pdf"
+            download="Obadiah_Bernstein_Resume.pdf"
             className="hover:text-black transition-colors"
           >
             Resume
