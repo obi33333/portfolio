@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import AlbumModelLink from "@/components/AlbumModelLink";
 import HeadshotKiosk from "@/components/HeadshotKiosk";
 import { ALBUM } from "@/content/album";
@@ -20,12 +21,19 @@ export default function Home() {
 
       <div className="grid gap-12 lg:grid-cols-[3fr_2fr] lg:items-start">
 
-        {/* ── Left: name + capstone hero ── */}
+        {/* ── Left: name + hero project ── */}
         <div className="flex flex-col gap-6">
 
           <h1 className="text-3xl font-bold tracking-tight text-black/85">
             Obadiah Bernstein
           </h1>
+
+          <Link
+            href="/projects"
+            className="text-sm text-black/50 transition-colors hover:text-black"
+          >
+            View all projects →
+          </Link>
 
           {/* Capstone hero card */}
           <Link
@@ -33,14 +41,13 @@ export default function Home() {
             className="group block overflow-hidden rounded-2xl border border-black/10 bg-white/60 transition-all duration-200 hover:-translate-y-0.5 hover:border-black/20 hover:shadow-md"
           >
             <div className="h-64 overflow-hidden bg-black/5">
-              <video
-                src="/projects/capstone/demo.mp4"
+              <Image
+                src="/projects/capstone/cover.jpg"
+                alt="Haptic Alarm System"
+                width={640}
+                height={256}
                 className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="auto"
+                priority
               />
             </div>
             <div className="p-5">
@@ -65,13 +72,6 @@ export default function Home() {
                 ))}
               </div>
             </div>
-          </Link>
-
-          <Link
-            href="/projects"
-            className="text-sm text-black/50 transition-colors hover:text-black"
-          >
-            View all projects →
           </Link>
 
         </div>
