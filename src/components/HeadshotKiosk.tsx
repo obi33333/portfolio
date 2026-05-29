@@ -68,7 +68,12 @@ export default function HeadshotKiosk({
           const current = angleRef.current;
           const diff = ((target - current + 540) % 360) - 180;
           const alpha = 1 - Math.exp(-k * dt);
-          angleRef.current = Math.abs(diff) < 0.15 ? target : current + diff * alpha;
+          if (Math.abs(diff) < 0.15) {
+            angleRef.current = target;
+            targetAngleRef.current = null; // snap done — resume auto-rotation
+          } else {
+            angleRef.current = current + diff * alpha;
+          }
         }
       }
 

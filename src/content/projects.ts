@@ -377,7 +377,7 @@ const PROJECTS: Project[] = [
     title: "Haptic Alarm System (Capstone)",
     summary:
       "Senior immersive media thesis: a haptic alarm system to replace audio alerts in medical environments where alarm fatigue is a real problem.",
-    tags: ["Electronics", "Physical Computing", "Prototyping", "Robotics"],
+    tags: ["Electronics", "Physical Computing", "Prototyping", "Robotics", "C++", "C#", ".NET", "SQL"],
     timeframe: "Senior year thesis, Chatham University",
     preview: { type: "image", src: "/projects/capstone/cover.jpg", alt: "Haptic fob device photo" },
     media: [
@@ -392,7 +392,7 @@ const PROJECTS: Project[] = [
     body: [
       "A haptic alarm system designed to replace audio alerts in medical environments like the NICU.",
       "Alarm fatigue is a real problem in clinical spaces. Too many overlapping sounds and staff stop responding to individual alerts. This system routes alerts to a wearable haptic fob instead, giving staff distinct signals without adding more noise to the room.",
-      "Built on Arduino hardware for haptic output, with a C++ backend handling alarm routing and priority.",
+      "Built on Arduino hardware for haptic output. The backend uses C++, C#, and .NET for alarm routing and priority management, with SQL for data logging and an HTML interface for configuration.",
     ],
   },
   {

@@ -28,6 +28,11 @@ export default function AlbumPage() {
         ← Back
       </Link>
 
+      {/* Loading text — sits behind the 3D scene, covered once it renders */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
+        <p className="text-sm text-black/30 tracking-wide">Model loading</p>
+      </div>
+
       <AlbumScene />
     </main>
   );
