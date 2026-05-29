@@ -385,8 +385,6 @@ const PROJECTS: Project[] = [
       { type: "image", src: "/projects/capstone/img2.jpeg", alt: "Haptic fob device" },
       { type: "image", src: "/projects/capstone/img563.jpeg", alt: "Device detail" },
       { type: "image", src: "/projects/capstone/img565.jpeg", alt: "Final prototype" },
-      { type: "image", src: "/projects/capstone/diagram.png", alt: "System diagram" },
-      { type: "image", src: "/projects/capstone/logo.png", alt: "Project logo" },
     ],
     links: { pdf: "/projects/capstone/presentation.pdf" },
     body: [
@@ -489,7 +487,7 @@ const PROJECTS: Project[] = [
       "App developer and IT analyst at W.J. Beitler, a trucking company. Building mobile interfaces in .NET MAUI and maintaining internal systems.",
     tags: [".NET MAUI", "SQL", "Mobile Development", "C#", "IT"],
     timeframe: "2025–Present",
-    preview: { type: "video", src: "/projects/wj-beitler/demo.mp4" },
+    preview: { type: "image", src: "/projects/wj-beitler/thumb.jpg", alt: "W.J. Beitler app screenshot" },
     media: [{ type: "video", src: "/projects/wj-beitler/demo.mp4" }],
     body: [
       "I work at W.J. Beitler as a .NET MAUI developer and IT analyst. Beitler is a trucking company.",
