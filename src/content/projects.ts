@@ -383,16 +383,16 @@ const PROJECTS: Project[] = [
     media: [
       { type: "gif", src: "/projects/capstone/demo.mp4" },
       { type: "image", src: "/projects/capstone/img2.jpeg", alt: "Haptic fob device" },
-      { type: "image", src: "/projects/capstone/img5.jpeg", alt: "Device assembly" },
       { type: "image", src: "/projects/capstone/img563.jpeg", alt: "Device detail" },
-      { type: "image", src: "/projects/capstone/img564.jpeg", alt: "Internal components" },
       { type: "image", src: "/projects/capstone/img565.jpeg", alt: "Final prototype" },
+      { type: "image", src: "/projects/capstone/diagram.png", alt: "System diagram" },
+      { type: "image", src: "/projects/capstone/logo.png", alt: "Project logo" },
     ],
     links: { pdf: "/projects/capstone/presentation.pdf" },
     body: [
       "A haptic alarm system designed to replace audio alerts in medical environments like the NICU.",
       "Alarm fatigue is a real problem in clinical spaces. Too many overlapping sounds and staff stop responding to individual alerts. This system routes alerts to a wearable haptic fob instead, giving staff distinct signals without adding more noise to the room.",
-      "Built on Arduino hardware for haptic output, with a C# and .NET backend handling alarm routing and priority.",
+      "Built on Arduino hardware for haptic output, with a C++ backend handling alarm routing and priority.",
     ],
   },
   {
