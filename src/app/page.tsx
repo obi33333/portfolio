@@ -59,7 +59,7 @@ export default function Home() {
           >
             <div className="h-52 overflow-hidden bg-black/5">
               <Image
-                src="/projects/capstone/cover.jpg"
+                src="/projects/capstone/FobsInChargingStation.jpg"
                 alt="Haptic Alarm System"
                 width={640}
                 height={176}
