@@ -8,7 +8,9 @@ import MediaGallery from "@/components/MediaGallery";
 import ModelViewer from "@/components/ModelViewer";
 
 export function generateStaticParams() {
-  return getAllProjects().map((p) => ({ slug: p.slug }));
+  return getAllProjects()
+    .filter((p) => p.slug !== "capstone")
+    .map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({
