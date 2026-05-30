@@ -379,12 +379,12 @@ const PROJECTS: Project[] = [
       "Senior immersive media thesis: a haptic alarm system to replace audio alerts in medical environments where alarm fatigue is a real problem.",
     tags: ["Electronics", "Physical Computing", "Prototyping", "Robotics", "C++", "C#", ".NET", ".NET MAUI", "SQL"],
     timeframe: "Senior year thesis, Chatham University",
-    preview: { type: "image", src: "/projects/capstone/cover.jpg", alt: "Haptic fob device photo" },
+    preview: { type: "image", src: "/projects/capstone/FobsInChargingStation.jpg", alt: "Three blue fobs sitting in their 3D-printed charging dock" },
     media: [
-      { type: "gif", src: "/projects/capstone/demo.mp4" },
-      { type: "image", src: "/projects/capstone/img2.jpeg", alt: "Haptic fob device" },
-      { type: "image", src: "/projects/capstone/img563.jpeg", alt: "Device detail" },
-      { type: "image", src: "/projects/capstone/img565.jpeg", alt: "Final prototype" },
+      { type: "video", src: "/projects/capstone/Gyrodemo.mp4", caption: "The display stays upright as the fob is rotated in any direction." },
+      { type: "image", src: "/projects/capstone/FobDeconstructed.jpeg", alt: "The fob case separated into its three layers: silicone outer shell, bezel ring, and internal electronics chassis" },
+      { type: "image", src: "/projects/capstone/InsideFob.jpeg", alt: "A close-up overhead view of the fob interior" },
+      { type: "image", src: "/projects/capstone/AllFobsAndListeners.jpeg", alt: "All three listener devices and fob shells side by side" },
     ],
     links: { pdf: "/projects/capstone/presentation.pdf" },
     body: [
