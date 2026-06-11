@@ -302,7 +302,7 @@ export default function CapstonePage() {
           the detection layer of the pipeline.
         </p>
         <p className="mt-4">
-          Each listener is a Wi-Fi-connected ESP8266 paired with a sound sensor, housed in a
+          Each listener is a Wi-Fi-connected ESP32 paired with a sound sensor, housed in a
           3D-printed enclosure lined with layers of sound dampening material: outer fabric,
           closed-cell foam, and ceramic fiber insulation. This reduces false positives from ambient
           room noise. When audio exceeds a set decibel threshold, the device serializes the event as
@@ -372,7 +372,7 @@ export default function CapstonePage() {
         <Divider />
 
         <p className="text-sm text-black/45 italic">
-          Built with: ESP32 / ESP8266, Arduino framework, SQL, REST API, HTML / CSS / JS
+          Built with: ESP32, Arduino framework, SQL, REST API, HTML / CSS / JS
         </p>
       </article>
     </main>

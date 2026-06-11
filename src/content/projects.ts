@@ -488,7 +488,7 @@ const PROJECTS: Project[] = [
     tags: [".NET MAUI", "SQL", "Mobile Development", "C#", "IT"],
     timeframe: "2025–Present",
     preview: { type: "image", src: "/projects/wj-beitler/thumb.jpg", alt: "W.J. Beitler app screenshot" },
-    media: [{ type: "video", src: "/projects/wj-beitler/AppDemo2026.mp4" }],
+    media: [{ type: "video", src: "/projects/wj-beitler/AppDemo2026_vertical.mp4" }],
     body: [
       "I work at W.J. Beitler as a .NET MAUI developer and IT analyst. W.J. Beitler is a trucking company.",
       "On the development side I write XAML pages and UI components, integrate custom libraries, and use SQL Management Studio to track operational data. I also wrote batch tools to automate ADB device connections for the team.",
@@ -562,7 +562,7 @@ const PROJECTS: Project[] = [
       { type: "image", src: "/projects/olkes-collection/staff_render.png", alt: "Staff render", caption: "Cultivators Staff, final textured render" },
       { type: "image", src: "/projects/olkes-collection/three_heads_cpu.png", alt: "Three heads render CPU", caption: "Three Heads Mask, alternate render pass" },
     ],
-    links: { model: "/projects/olkes-collection/three_heads.glb" },
+    links: { model: "/projects/olkes-collection/staff.glb" },
     body: [
       "Hired to photoscan a collection of African artifacts and produce 3D models for archival and research use. The collection included a three-headed helmet mask, a cultivators staff, and several other pieces.",
       "Each object was photographed from hundreds of angles, processed into a point cloud, and reconstructed as a textured mesh. Polycam handled capture and processing. Blender handled cleanup, UV unwrapping, and retexturing. Deliverables went out in FBX, GLB, PLY, and STL.",
