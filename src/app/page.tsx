@@ -14,10 +14,8 @@ const ALBUM_MODEL_PARTS = [
 ];
 
 const HEADSHOTS = [
-  { src: "/headshots/R5__2022.jpg", alt: "Headshot" },
   { src: "/headshots/R5__2023.jpg", alt: "Headshot" },
   { src: "/headshots/R5__2028.jpg", alt: "Headshot" },
-  { src: "/headshots/R5__2034.jpg", alt: "Headshot" },
   { src: "/headshots/R5__2037.jpg", alt: "Headshot" },
   { src: "/headshots/R5__2100.jpg", alt: "Headshot" },
 ];
@@ -59,7 +57,7 @@ export default function Home() {
           >
             <div className="h-52 overflow-hidden bg-black/5">
               <Image
-                src="/projects/capstone/cover.jpg"
+                src="/projects/capstone/FobsInChargingStation.jpg"
                 alt="Haptic Alarm System"
                 width={640}
                 height={176}

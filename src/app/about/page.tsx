@@ -3,10 +3,8 @@ import type { Metadata } from "next";
 import HeadshotKiosk from "@/components/HeadshotKiosk";
 
 const HEADSHOTS = [
-  { src: "/headshots/R5__2022.jpg", alt: "Headshot" },
   { src: "/headshots/R5__2023.jpg", alt: "Headshot" },
   { src: "/headshots/R5__2028.jpg", alt: "Headshot" },
-  { src: "/headshots/R5__2034.jpg", alt: "Headshot" },
   { src: "/headshots/R5__2037.jpg", alt: "Headshot" },
   { src: "/headshots/R5__2100.jpg", alt: "Headshot" },
 ];
