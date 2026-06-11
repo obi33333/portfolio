@@ -157,7 +157,7 @@ export default function HeadshotKiosk({
         >
           {safeImages.map((img, idx) => (
             <div
-              key={img.src}
+              key={`${img.src}-${idx}`}
               className="absolute left-1/2 top-1/2 overflow-hidden rounded-2xl backface-hidden transition-shadow duration-200 hover:shadow-[0_0_24px_8px_rgba(255,255,255,0.45)]"
               style={{
                 width: itemWidth,

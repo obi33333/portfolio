@@ -4,9 +4,9 @@ import type { Project } from "@/content/projects";
 
 const CATEGORIES: { slug: Project["category"]; title: string; summary: string }[] = [
   {
-    slug: "one-day",
-    title: "One Day Projects",
-    summary: "Quick experiments and builds I made in a day.",
+    slug: "professional",
+    title: "Professional Experience",
+    summary: "Jobs and contracted roles I've held.",
   },
   {
     slug: "robotics",
@@ -19,9 +19,9 @@ const CATEGORIES: { slug: Project["category"]; title: string; summary: string }[
     summary: "Short films, VFX composites, and video work.",
   },
   {
-    slug: "professional",
-    title: "Professional Experience",
-    summary: "Jobs and contracted roles I've held.",
+    slug: "one-day",
+    title: "One Day Projects",
+    summary: "Quick experiments and builds I made in a day.",
   },
 ];
 

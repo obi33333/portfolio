@@ -2,13 +2,14 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import HeadshotKiosk from "@/components/HeadshotKiosk";
 
+// Four shots duplicated to six panels so the carousel doesn't look sparse.
 const HEADSHOTS = [
-  { src: "/headshots/R5__2022.jpg", alt: "Headshot" },
   { src: "/headshots/R5__2023.jpg", alt: "Headshot" },
   { src: "/headshots/R5__2028.jpg", alt: "Headshot" },
-  { src: "/headshots/R5__2034.jpg", alt: "Headshot" },
   { src: "/headshots/R5__2037.jpg", alt: "Headshot" },
   { src: "/headshots/R5__2100.jpg", alt: "Headshot" },
+  { src: "/headshots/R5__2023.jpg", alt: "Headshot" },
+  { src: "/headshots/R5__2037.jpg", alt: "Headshot" },
 ];
 
 export const metadata: Metadata = {
