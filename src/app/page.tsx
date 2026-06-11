@@ -13,11 +13,14 @@ const ALBUM_MODEL_PARTS = [
   "/album/model/Parts/recordBag.glb",
 ];
 
+// Four shots duplicated to six panels so the carousel doesn't look sparse.
 const HEADSHOTS = [
   { src: "/headshots/R5__2023.jpg", alt: "Headshot" },
   { src: "/headshots/R5__2028.jpg", alt: "Headshot" },
   { src: "/headshots/R5__2037.jpg", alt: "Headshot" },
   { src: "/headshots/R5__2100.jpg", alt: "Headshot" },
+  { src: "/headshots/R5__2023.jpg", alt: "Headshot" },
+  { src: "/headshots/R5__2037.jpg", alt: "Headshot" },
 ];
 
 export default function Home() {

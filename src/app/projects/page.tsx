@@ -14,14 +14,14 @@ const CATEGORIES: { slug: Project["category"]; title: string; summary: string }[
     summary: "Electronics, robots, and hands-on physical computing.",
   },
   {
-    slug: "one-day",
-    title: "One Day Projects",
-    summary: "Quick experiments and builds I made in a day.",
-  },
-  {
     slug: "film-vfx",
     title: "Film / VFX",
     summary: "Short films, VFX composites, and video work.",
+  },
+  {
+    slug: "one-day",
+    title: "One Day Projects",
+    summary: "Quick experiments and builds I made in a day.",
   },
 ];
 
